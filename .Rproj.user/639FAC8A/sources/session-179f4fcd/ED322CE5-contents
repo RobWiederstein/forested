@@ -1,0 +1,233 @@
+---
+title: "Forested Project"
+author: "Rob Wiederstein"
+format: 
+  revealjs:
+    theme: default
+    transition: fade
+    slide-number: true
+    scrollable: true 
+    chalkboard: 
+      buttons: true
+execute:
+  echo: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+library(targets)
+library(gt)
+```
+
+
+# The Biophysical Audit
+## The `forested` Package
+
+:::: {.columns}
+
+::: {.column width="40%"}
+![](https://github.com/simonpcouch/forested/blob/main/inst/logo.png?raw=true){fig-align="center" width="80%"}
+:::
+
+::: {.column width="60%"}
+- contains data frames intended for use in predictive modeling applications where the more easily-accessible remotely sensed data can be used to predict whether a plot is forested or non-forested.
+
+- [https://github.com/simonpcouch/forested](https://github.com/simonpcouch/forested)
+:::
+
+::::
+
+::: {.notes}
+**Speaker Notes:**
+* The `forested` package is our primary data source, containing the raw measurements for both the Washington and Georgia "islands".
+* We are auditing this package's features to see how well they predict the 'forested' outcome in two geographically distant locations.
+:::
+
+## The Autocorrelation Trap{text-align="center"}
+
+<br/>
+<br/>
+<br/>
+<br/>
+
+> "Everything is related to everything else, but near things are more related than distant things."
+>
+> — Waldo Tobler (1970)
+
+::: {.notes}
+
+- This is the "First Law of Geography" and explains why our Random Forest "cheats" using Lat/Lon.
+
+- Proximity Bias (Spatial Autocorrelation) creates high local accuracy but zero portability.
+
+- We are testing for **Stationarity**: Do the biophysical rules of Washington still work in Georgia?
+
+:::
+
+## The Goal of Prediction {text-align="center"}
+
+<br/>
+<br/>
+<br/>
+
+> "The fundamental goal of a model is not to describe the data we have, but to predict the data we don't."
+>
+> — Max Kuhn & Kjell Johnson, *Applied Predictive Modeling*
+
+::: {.notes}
+
+- This quote from Kuhn and Johnson is the foundation of our entire project.
+- If our model doesn't generalize to the "second island" (Georgia), it has failed its fundamental goal.
+
+:::
+
+## Regional Regimes
+
+:::: {.columns}
+
+::: {.column width="50%"}
+### Drivers of Growth
+* **Washington**: Topographically driven; governed by orographic lift and rain shadows.
+* **Georgia**: Climatically driven; limited by seasonal moisture stress and drainage.
+:::
+
+::: {.column width="50%"}
+### Site Constraints
+* **WA**: Timberline limits and cold (cryic) soil regimes.
+* **GA**: Highly weathered acidic Ultisols and bottomland saturation.
+:::
+
+::::
+
+::: {.notes}
+**Speaker Notes:**
+* **Washington**: Forestation is restricted by the Cascade rain shadow and high-elevation cold.
+* **Georgia**: Patterns are a mosaic of agricultural land use and timber production on red clay (Ultisols).
+:::
+
+
+
+## Forest Location
+
+```{r}
+#| label: Map of United States
+#| echo: false
+tar_read(map_us)
+```
+
+## Regional Forestation
+
+```{r}
+#| label: Map of Georgia and Washington
+#| echo: false
+#| fig-cap: "Caution: States are rescaled independently to maximize clarity."
+tar_read(map_wa_ga)
+```
+
+
+# Explore
+## Descriptive Summary
+
+
+```{r}
+#| label: display-summary
+#| echo: false
+tar_read(tbl_forest_us_summary)
+```
+
+
+## Distributions
+
+```{r}
+#| label: Distributions
+tar_read(variable_distrib)
+```
+
+::: {.notes}
+**1. Topic Introduction**
+
+- This slide presents a univariate audit of our numeric predictors to identify which biophysical features provide the strongest signal for forestation.
+
+- By comparing the "fingerprints" of forested (green) and non-forested (brown) plots, we can visually assess the potential for classification before we begin training models on our EPYC VM.
+
+**2. Axis Definitions**
+- **The X-Axis (Value)**: Represents the measurement for each specific biophysical variable, such as millimeters of rain or degrees Celsius.
+- **The Y-Axis (Density)**: Represents the probability density for a given value; higher peaks indicate a higher frequency of observations at that specific value within the dataset.
+
+**3. Significant Variables (High Contrast)**
+- **Precipitation (`precip_annual`)**: This is a primary driver; forested plots are heavily concentrated in higher rainfall zones, while non-forested plots dominate the dry end of the spectrum.
+- **Elevation**: There is a distinct "Forestation Window"; plots between 1,000 and 2,000 meters show a significant green peak, whereas non-forested plots cluster at lower elevations.
+- **Temperature (`temp_annual_max` & `mean`)**: Forested plots consistently peak at lower maximum and mean temperatures compared to non-forested areas, suggesting a thermal threshold for forest growth.
+- **Vapor Pressure (`vapor_max` & `min`)**: We see a strong bimodal separation; forested areas occupy a specific atmospheric moisture niche distinctly different from non-forested regions.
+
+**4. Non-Significant Variables (High Overlap)**
+- **Orientation (`eastness` & `northness`)**: These distributions are nearly identical for both classes, suggesting that cardinal direction alone is a weak predictor in this regional regime.
+- **Roughness**: While there is a slight lean toward forested plots being in rougher terrain, the massive overlap indicates surface texture is not a primary discriminator.
+:::
+
+
+## Outliers
+
+```{r}
+#| label: outliers
+tar_read(plt_outliers)
+```
+
+
+
+## Map Outliers
+
+```{r}
+#| label: fig-wa-outliers
+#| fig-cap: "The Biophysical Edge: 3-Sigma extremes reveal alpine mixing"
+#| out-width: "100%"
+
+knitr::include_graphics("figs/wa_outliers.png")
+```
+
+::: {.notes}
+**1. Topic Introduction**
+* This map visualizes our "3-Sigma" outliers, which are heavily concentrated along the mountainous west side of the state.
+
+**2. The Orographic Factor**
+* The concentration on the west is driven by the Cascades and Olympics. These regions host our most extreme biophysical values for precipitation and elevation.
+
+**3. Intermixed Extremes**
+* Note the intermixing of green and brown points. In these high-volatility alpine zones, a forest and a barren ridge often share the same coordinates.
+* This proves that local "nearness" is not enough to predict forestation here; the model must rely on the specific biophysical drivers we identified in our density distributions.
+
+**4. The Audit Link**
+* These outliers represent the "edge cases" of our Washington model. Their intermixed nature makes them the hardest points to classify, serving as a preview for our Georgia transfer test.
+:::
+
+
+## Principal Component Analysis
+
+```{r}
+#| label: pca
+tar_read(plt_wa_pca)
+```
+
+::: {.notes}
+**1. What is PCA?**
+
+PCA (Principal Component Analysis) is a dimensionality reduction tool that takes our 16 variables—including latitude, longitude, and climate data—and compresses them into two primary axes called Principal Components. It allows us to view the 'shape' of the entire Washington dataset in a single 2D space.
+
+**2. Why use it here?**
+
+We use it to explore the structural integrity of our data. Before building a model, we need to know if the environment of 'Forested' plots is actually mathematically different from 'Non-Forested' plots. By including lat and lon, we are seeing the combined power of geography and biophysics.
+
+**3. Does it show anything?**
+
+It shows that the data is not a random cloud; it has a clear orientation. The spread along PC1 captures the primary environmental gradient of Washington—likely moving from the moist coast to the arid east. 
+
+**4. Is there good separation on the outcome variable?**
+
+Yes, the separation is significant. We see a distinct 'No' (Non-Forested) cluster forming a tail on the right and a dense 'Yes' (Forested) cluster on the left. While there is 'Alpine Mixing' in the center where categories overlap, the two groups occupy mostly different regions of the feature space.
+
+**5. What does it foreshadow for modeling?**
+
+This separation foreshadows high accuracy for our local Washington model. Because the classes are so distinct in this space, a logistic regression should have no trouble drawing a boundary between them. However, the tight coupling of biophysics with coordinates (lat/lon) here warns us that the model might 'memorize' Washington's map, which will be the primary challenge when we attempt to transfer it to Georgia.
+:::
+

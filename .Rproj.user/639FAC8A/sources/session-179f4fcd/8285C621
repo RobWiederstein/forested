@@ -1,0 +1,26 @@
+{
+    "id": "8285C621",
+    "path": "~/data/projects/forested/_targets.R",
+    "project_path": null,
+    "type": "r_source",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1767526392376.0,
+    "source_on_save": false,
+    "relative_order": 3,
+    "properties": {
+        "source_window_id": "",
+        "Source": "Source",
+        "cursorPosition": "328,0",
+        "scrollLine": "21"
+    },
+    "folds": "25|47|30|0|\n31|40|41|0|\n42|68|54|0|\n55|30|81|0|\n82|56|108|0|\n109|50|126|0|\n127|36|163|0|\n164|47|194|0|\n195|40|199|0|\n200|77|211|0|\n212|79|263|0|\n264|53|296|0|\n",
+    "lastKnownWriteTime": 1767835991,
+    "encoding": "UTF-8",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1767836019397,
+    "read_only": false,
+    "read_only_alternatives": []
+}

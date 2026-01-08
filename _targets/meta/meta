@@ -1,0 +1,36 @@
+name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
+summarize_data|function|dc619228d9319364|||||||||||||||
+data|stem|308b0c61cdcb7c9b|762fa7ba72935648|2c530c1562a7fbd1|33550471||t20457.5060944399s|s293316b|293316|rds|local|vector|||0.004||
+forest_us|stem|7a61d869bf699933|f9cfe37305dec490|30c15351ab463820|56439762||t20459.4680914478s|s679583b|679583|rds|local|vector|||0.783||
+data_summary|stem|3fc1e1d981766369|f175d1b1ae7b109f|3825c8a4fc4e911e|-651121042||t20459.488279248s|s1044b|1044|rds|local|vector|||0.074||
+tbl_forest_us_summary|stem|1fb029d88a95f340|7b923d05b1db5fa8|6288711f007af42f|451764908||t20459.4882795605s|s11300b|11300|rds|local|vector|||0.012||
+wa_ga_map|stem|310311c6df6df287|615da0519d6f79fa|2c530c1562a7fbd1|-537964005||t20459.5101089267s|s1730b|1730|rds|local|vector|||1.162||
+map_wa_ga|stem|7466cd6589b9c646|8e9f6a8d9c8ef410|c24892cc07071256|-1348452101||t20459.5143492116s|s5776312b|5776312|rds|local|vector|||0.139||
+map_us|stem|b655a1bab66ee1f7|a6a94ce6d510438a|0e165cfecebbbece|479175181||t20459.5212677288s|s5522064b|5522064|rds|local|vector|||0.721|None of your features are in Alaska, Hawaii, or Puerto Rico, so no geometries will be shifted. Transforming your object's CRS to 'ESRI:102003'|
+variable_distrib|stem|dd84cf2ae02a89e3|216429497c1a512d|3f119d11c1183b5e|-1398059403||t20460.5438790309s|s1261190b|1261190|rds|local|vector|||0.91||
+plt_outliers|stem|827d871aaaba1201|529bebc985f14468|cfaaeb1f61b21138|-323837079||t20460.5594990313s|s3591667b|3591667|rds|local|vector|||0.942||
+wa_boundary_sf|stem|19e150b354934bd7|e51722dc04ec15ca|2c530c1562a7fbd1|1929487083||t20460.5773053284s|s1176b|1176|rds|local|vector|||0.483||
+map_elevation_outliers|function|b5c1bdfcc7c767c7|||||||||||||||
+boundary_wa|stem|19e150b354934bd7|c9ca80ee0160f2d4|e9d2fde1c4ccfdb8|-787902271||t20460.8201320521s|s1176b|1176|rds|local|vector|||2.533||
+outlier_elevation_map|stem||f0f37dc55a71f503|2a240ba48735e499|1394124206||t20460.6687571635s||0|rds|local|vector|||0.002||could not find function 'map_elevation_outliers'
+boundary_wa_sf|stem|19e150b354934bd7|c9ca80ee0160f2d4|e9d2fde1c4ccfdb8|-327773459||t20460.8305714974s|s1176b|1176|rds|local|vector|||2.77||
+wa_elev_file|stem|dd3a036fecfeb33f|8ccf5b053f33d2b5|5e474d024281c8c6|1944262089|data/wa_elevation.tif|t20460.8454904648s|s2186052b|2186052|file|local|vector|||4.096||
+plot_outliers_with_elevation|function|e2ac992d82d6f497
+map_wa_outliers|stem|be28ddd23946f6df|f4344a5b23c7c22c|a9352f22999bf3e2|-1030335457|figs/wa_outliers.png|t20460.8877823896s|s980324b|980324|file|local|vector|||3.226|st_point_on_surface may not give correct results for longitude/latitude data|
+plot_wa_honest_pca|function|61733f895d3b6265
+plt_wa_pca_honest|stem|7f8af943197dbcaa|92f48a1edc877abc|20cde397324795f6|-1747891940||t20461.0544677616s|s4096787b|4096787|rds|local|vector|||2.549||
+plt_wa_pca|stem|7d52f0f594e8fb32|92f48a1edc877abc|e69193df842e7f2e|-507500259||t20461.0573514351s|s4720444b|4720444|rds|local|vector|||2.656||
+create_elevation_raster|function|4960060ee4979659
+save_outlier_map_png|function|8adf08adf07d59f2
+compare_univariate_distribution|function|d0e551cb520727f8
+identify_outliers|function|1e7719f51b5ca46a
+combine_forest|function|38e7091fed60752f
+.Random.seed|object|b902e797d2b7f454
+style_audit_table|function|a06f5b490e5432d5
+plot_regional_comparison|function|a20913ab3d20541c
+plot_wa_pca|function|8b7d897cc17b5360
+create_stats_summary|function|0d56eec68078b771
+draw_us_map|function|5e0550bf96de951e
+map_biophysical_outliers_sf|function|823e23298972cfe5
+fetch_state_boundary|function|d7d4f5d042975533
+report|stem|c28582f9153d92f1|368f82a159e6b691|866f4331e17070ec|787668912|index_files*index.html*index.qmd|t20461.0605789823s|s13772152b|13772152|file|local|vector|||8.387||

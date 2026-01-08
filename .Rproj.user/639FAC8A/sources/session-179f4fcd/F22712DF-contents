@@ -1,0 +1,69 @@
+# R/functions.R
+library(magrittr)
+library(dplyr)
+library(psych)
+library(sf)
+library(tidyverse)
+
+library(tidyverse)
+
+# 1. Prepare and scale the data
+forested_scaled <- forested %>%
+  select(forested, where(is.numeric)) %>%
+  pivot_longer(cols = -forested, names_to = "variable", values_to = "value") %>%
+  group_by(variable) %>%
+  mutate(
+    # Scale each variable (Z-score)
+    scaled_value = (value - mean(value, na.rm = TRUE)) / sd(value, na.rm = TRUE),
+    # Identify extreme outliers (> 3 standard deviations)
+    is_extreme = abs(scaled_value) > 3
+  ) %>%
+  ungroup()
+
+# 2. Create the plot
+ggplot(forested_scaled, aes(x = forested, y = scaled_value, fill = forested)) +
+  # Draw boxplots without default outliers (we'll add our own colored ones)
+  geom_boxplot(outlier.shape = NA, alpha = 0.4) +
+  # Add points for outliers, colored by whether they are > 3 SD
+  geom_jitter(data = filter(forested_scaled, is_extreme == TRUE), 
+              aes(color = "Extreme (>3 SD)"), width = 0.2, size = 1) +
+  geom_jitter(data = filter(forested_scaled, is_extreme == FALSE & 
+                              (scaled_value > (quantile(scaled_value, 0.75) + 1.5 * IQR(scaled_value)) | 
+                                 scaled_value < (quantile(scaled_value, 0.25) - 1.5 * IQR(scaled_value)))),
+              aes(color = "Standard Outlier"), width = 0.2, alpha = 0.3, size = 0.8) +
+  facet_wrap(~variable, scales = "free_y") +
+  scale_fill_manual(values = c("Yes" = "#228B22", "No" = "#D2691E")) +
+  scale_color_manual(values = c("Extreme (>3 SD)" = "red", "Standard Outlier" = "black")) +
+  labs(
+    title = "Scaled Predictor Distributions & Extreme Outliers",
+    subtitle = "Y-axis represents Standard Deviations from the Mean (Z-scores)",
+    y = "Standard Deviations (σ)",
+    color = "Outlier Type"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+
+# 1. Define the recipe for the entire dataset
+pca_full_recipe <- recipe(forested ~ ., data = forested) %>%
+  # Keep metadata variables out of the calculation
+  update_role(year, tree_no_tree, land_type, county, lon, lat, new_role = "ID") %>%
+  step_naomit(all_predictors()) %>%
+  step_zv(all_numeric_predictors()) %>%
+  step_normalize(all_numeric_predictors()) %>%
+  step_pca(all_numeric_predictors(), num_comp = 2)
+
+# 2. Prep (train the PCA on the whole set) and Bake (apply it)
+pca_estimates <- prep(pca_full_recipe)
+pca_full_data <- bake(pca_estimates, new_data = NULL)
+
+# 3. Plotting the 'Truth'
+ggplot(pca_full_data, aes(x = PC1, y = PC2, color = forested)) +
+  geom_point(alpha = 0.3, size = 1) + 
+  scale_color_manual(values = c("Yes" = "#228B22", "No" = "#D2691E")) + # Forest green and Soil brown
+  labs(
+    title = "Full Dataset PCA: Class Separability",
+    subtitle = "7,107 observations reduced to 2 Dimensions",
+    x = paste0("PC1 (", round(pca_estimates$steps[[4]]$res$sdev[1]^2 / sum(pca_estimates$steps[[4]]$res$sdev^2)*100, 1), "%)"),
+    y = paste0("PC2 (", round(pca_estimates$steps[[4]]$res$sdev[2]^2 / sum(pca_estimates$steps[[4]]$res$sdev^2)*100, 1), "%)")
+  ) +
+  theme_minimal()

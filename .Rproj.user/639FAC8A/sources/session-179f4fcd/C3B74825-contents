@@ -1,0 +1,13 @@
+library(forested)
+library(tidyverse)
+library(tidymodels)
+library(psych)
+library(sf)
+
+stats_table <- forested %>%
+  st_drop_geometry() %>%
+  select(where(is.numeric)) %>%
+  select(-year, -lon, -lat) %>% 
+  describe() %>% 
+  select(-vars, -range, -se, -mad) %>% 
+  print()
