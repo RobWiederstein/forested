@@ -6,8 +6,8 @@
 <script src="index_files/libs/quarto-html/tippy.umd.min.js"></script>
 <link href="index_files/libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="index_files/libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="index_files/libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
-  <meta name="generator" content="quarto-1.7.32">
+<link href="index_files/libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.8.25">
 
   <meta name="author" content="Rob Wiederstein">
   <title>Forested Project</title>
@@ -29,7 +29,7 @@
       vertical-align: middle;
     }
   </style>
-  <link rel="stylesheet" href="index_files/libs/revealjs/dist/theme/quarto-f563837468303362081e247dddd440d0.css">
+  <link rel="stylesheet" href="index_files/libs/revealjs/dist/theme/quarto-534cd8e3a96973385dffff3f4709048d.css">
   <link href="index_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="index_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="index_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -142,9 +142,16 @@ Rob Wiederstein
 
 </section>
 <section>
-<section id="the-biophysical-audit" class="title-slide slide level1 center">
-<h1>The Biophysical Audit</h1>
+<section id="introduction" class="title-slide slide level1 center">
+<h1>Introduction</h1>
 
+</section>
+<section id="question" class="slide level2 scrollable">
+<h2>Question</h2>
+<ol type="1">
+<li>What happens when a model is applied outside its original training parameters?</li>
+<li>How does the inclusion of spatial point data (lat and lon) affect the model?</li>
+</ol>
 </section>
 <section id="the-forested-package" class="slide level2">
 <h2>The <code>forested</code> Package</h2>
@@ -177,10 +184,9 @@ Rob Wiederstein
 </section>
 <section id="the-autocorrelation-trap" class="slide level2" data-text-align="center">
 <h2>The Autocorrelation Trap</h2>
-<p><br> <br> <br> <br></p>
+<p><br> <br> <br></p>
 <blockquote>
-<p>“Everything is related to everything else, but near things are more related than distant things.”</p>
-<p>— Waldo Tobler (1970)</p>
+<p>“Everything is related to everything else, but near things are more related than distant things.” — Waldo Tobler (1970)</p>
 </blockquote>
 <aside class="notes">
 <ul>
@@ -271,23 +277,23 @@ Rob Wiederstein
 <h2>Descriptive Summary</h2>
 <div class="cell">
 <div class="cell-output-display">
-<div id="vpbvuqhdwm" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#vpbvuqhdwm table {
+<div id="bzaxoixerw" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#bzaxoixerw table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#vpbvuqhdwm thead, #vpbvuqhdwm tbody, #vpbvuqhdwm tfoot, #vpbvuqhdwm tr, #vpbvuqhdwm td, #vpbvuqhdwm th {
+#bzaxoixerw thead, #bzaxoixerw tbody, #bzaxoixerw tfoot, #bzaxoixerw tr, #bzaxoixerw td, #bzaxoixerw th {
   border-style: none;
 }
 
-#vpbvuqhdwm p {
+#bzaxoixerw p {
   margin: 0;
   padding: 0;
 }
 
-#vpbvuqhdwm .gt_table {
+#bzaxoixerw .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -313,12 +319,12 @@ Rob Wiederstein
   border-left-color: #D3D3D3;
 }
 
-#vpbvuqhdwm .gt_caption {
+#bzaxoixerw .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#vpbvuqhdwm .gt_title {
+#bzaxoixerw .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -330,7 +336,7 @@ Rob Wiederstein
   border-bottom-width: 0;
 }
 
-#vpbvuqhdwm .gt_subtitle {
+#bzaxoixerw .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -342,7 +348,7 @@ Rob Wiederstein
   border-top-width: 0;
 }
 
-#vpbvuqhdwm .gt_heading {
+#bzaxoixerw .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -354,13 +360,13 @@ Rob Wiederstein
   border-right-color: #D3D3D3;
 }
 
-#vpbvuqhdwm .gt_bottom_border {
+#bzaxoixerw .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#vpbvuqhdwm .gt_col_headings {
+#bzaxoixerw .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -375,7 +381,7 @@ Rob Wiederstein
   border-right-color: #D3D3D3;
 }
 
-#vpbvuqhdwm .gt_col_heading {
+#bzaxoixerw .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -395,7 +401,7 @@ Rob Wiederstein
   overflow-x: hidden;
 }
 
-#vpbvuqhdwm .gt_column_spanner_outer {
+#bzaxoixerw .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -407,15 +413,15 @@ Rob Wiederstein
   padding-right: 4px;
 }
 
-#vpbvuqhdwm .gt_column_spanner_outer:first-child {
+#bzaxoixerw .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#vpbvuqhdwm .gt_column_spanner_outer:last-child {
+#bzaxoixerw .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#vpbvuqhdwm .gt_column_spanner {
+#bzaxoixerw .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -427,11 +433,11 @@ Rob Wiederstein
   width: 100%;
 }
 
-#vpbvuqhdwm .gt_spanner_row {
+#bzaxoixerw .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#vpbvuqhdwm .gt_group_heading {
+#bzaxoixerw .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -457,7 +463,7 @@ Rob Wiederstein
   text-align: left;
 }
 
-#vpbvuqhdwm .gt_empty_group_heading {
+#bzaxoixerw .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -472,15 +478,15 @@ Rob Wiederstein
   vertical-align: middle;
 }
 
-#vpbvuqhdwm .gt_from_md > :first-child {
+#bzaxoixerw .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#vpbvuqhdwm .gt_from_md > :last-child {
+#bzaxoixerw .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#vpbvuqhdwm .gt_row {
+#bzaxoixerw .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -499,7 +505,7 @@ Rob Wiederstein
   overflow-x: hidden;
 }
 
-#vpbvuqhdwm .gt_stub {
+#bzaxoixerw .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -512,7 +518,7 @@ Rob Wiederstein
   padding-right: 5px;
 }
 
-#vpbvuqhdwm .gt_stub_row_group {
+#bzaxoixerw .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -526,15 +532,15 @@ Rob Wiederstein
   vertical-align: top;
 }
 
-#vpbvuqhdwm .gt_row_group_first td {
+#bzaxoixerw .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#vpbvuqhdwm .gt_row_group_first th {
+#bzaxoixerw .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#vpbvuqhdwm .gt_summary_row {
+#bzaxoixerw .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -544,16 +550,16 @@ Rob Wiederstein
   padding-right: 5px;
 }
 
-#vpbvuqhdwm .gt_first_summary_row {
+#bzaxoixerw .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#vpbvuqhdwm .gt_first_summary_row.thick {
+#bzaxoixerw .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#vpbvuqhdwm .gt_last_summary_row {
+#bzaxoixerw .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -563,7 +569,7 @@ Rob Wiederstein
   border-bottom-color: #D3D3D3;
 }
 
-#vpbvuqhdwm .gt_grand_summary_row {
+#bzaxoixerw .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -573,7 +579,7 @@ Rob Wiederstein
   padding-right: 5px;
 }
 
-#vpbvuqhdwm .gt_first_grand_summary_row {
+#bzaxoixerw .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -583,7 +589,7 @@ Rob Wiederstein
   border-top-color: #D3D3D3;
 }
 
-#vpbvuqhdwm .gt_last_grand_summary_row_top {
+#bzaxoixerw .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -593,11 +599,11 @@ Rob Wiederstein
   border-bottom-color: #D3D3D3;
 }
 
-#vpbvuqhdwm .gt_striped {
+#bzaxoixerw .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#vpbvuqhdwm .gt_table_body {
+#bzaxoixerw .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -606,7 +612,7 @@ Rob Wiederstein
   border-bottom-color: #D3D3D3;
 }
 
-#vpbvuqhdwm .gt_footnotes {
+#bzaxoixerw .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -620,7 +626,7 @@ Rob Wiederstein
   border-right-color: #D3D3D3;
 }
 
-#vpbvuqhdwm .gt_footnote {
+#bzaxoixerw .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -629,7 +635,7 @@ Rob Wiederstein
   padding-right: 5px;
 }
 
-#vpbvuqhdwm .gt_sourcenotes {
+#bzaxoixerw .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -643,7 +649,7 @@ Rob Wiederstein
   border-right-color: #D3D3D3;
 }
 
-#vpbvuqhdwm .gt_sourcenote {
+#bzaxoixerw .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -651,80 +657,80 @@ Rob Wiederstein
   padding-right: 5px;
 }
 
-#vpbvuqhdwm .gt_left {
+#bzaxoixerw .gt_left {
   text-align: left;
 }
 
-#vpbvuqhdwm .gt_center {
+#bzaxoixerw .gt_center {
   text-align: center;
 }
 
-#vpbvuqhdwm .gt_right {
+#bzaxoixerw .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#vpbvuqhdwm .gt_font_normal {
+#bzaxoixerw .gt_font_normal {
   font-weight: normal;
 }
 
-#vpbvuqhdwm .gt_font_bold {
+#bzaxoixerw .gt_font_bold {
   font-weight: bold;
 }
 
-#vpbvuqhdwm .gt_font_italic {
+#bzaxoixerw .gt_font_italic {
   font-style: italic;
 }
 
-#vpbvuqhdwm .gt_super {
+#bzaxoixerw .gt_super {
   font-size: 65%;
 }
 
-#vpbvuqhdwm .gt_footnote_marks {
+#bzaxoixerw .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#vpbvuqhdwm .gt_asterisk {
+#bzaxoixerw .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#vpbvuqhdwm .gt_indent_1 {
+#bzaxoixerw .gt_indent_1 {
   text-indent: 5px;
 }
 
-#vpbvuqhdwm .gt_indent_2 {
+#bzaxoixerw .gt_indent_2 {
   text-indent: 10px;
 }
 
-#vpbvuqhdwm .gt_indent_3 {
+#bzaxoixerw .gt_indent_3 {
   text-indent: 15px;
 }
 
-#vpbvuqhdwm .gt_indent_4 {
+#bzaxoixerw .gt_indent_4 {
   text-indent: 20px;
 }
 
-#vpbvuqhdwm .gt_indent_5 {
+#bzaxoixerw .gt_indent_5 {
   text-indent: 25px;
 }
 
-#vpbvuqhdwm .katex-display {
+#bzaxoixerw .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#vpbvuqhdwm div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#bzaxoixerw div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
 
-<table class="gt_table caption-top" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<table class="gt_table caption-top" data-quarto-bootstrap="false">
 <thead>
 <tr class="gt_heading header">
-<th colspan="10" class="gt_heading gt_title gt_font_normal gt_bottom_border">Summary Stats</th>
+<td colspan="10" class="gt_heading gt_title gt_font_normal gt_bottom_border">Summary Stats</td>
 </tr>
 <tr class="gt_col_headings even">
 <th id="variable" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">variable</th>
@@ -742,51 +748,27 @@ Rob Wiederstein
 <tbody class="gt_table_body">
 <tr class="odd">
 <td class="gt_row gt_left" headers="variable">roughness</td>
-<td class="gt_row gt_right" headers="n">18,044.00</td>
-<td class="gt_row gt_right" headers="mean">24.41</td>
-<td class="gt_row gt_right" headers="sd">35.85</td>
-<td class="gt_row gt_right" headers="median">10.00</td>
-<td class="gt_row gt_right" headers="trimmed">16.10</td>
+<td class="gt_row gt_right" headers="n">7,107.00</td>
+<td class="gt_row gt_right" headers="mean">47.27</td>
+<td class="gt_row gt_right" headers="sd">46.46</td>
+<td class="gt_row gt_right" headers="median">32.00</td>
+<td class="gt_row gt_right" headers="trimmed">40.06</td>
 <td class="gt_row gt_right" headers="min">0.00</td>
 <td class="gt_row gt_right" headers="max">376.00</td>
-<td class="gt_row gt_right" headers="skew">2.57</td>
-<td class="gt_row gt_right" headers="kurtosis">7.95</td>
+<td class="gt_row gt_right" headers="skew">1.44</td>
+<td class="gt_row gt_right" headers="kurtosis">2.37</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left gt_striped" headers="variable">precip_annual</td>
-<td class="gt_row gt_right gt_striped" headers="n">18,044.00</td>
-<td class="gt_row gt_right gt_striped" headers="mean">1,237.64</td>
-<td class="gt_row gt_right gt_striped" headers="sd">644.91</td>
-<td class="gt_row gt_right gt_striped" headers="median">1,256.00</td>
-<td class="gt_row gt_right gt_striped" headers="trimmed">1,182.15</td>
-<td class="gt_row gt_right gt_striped" headers="min">171.00</td>
-<td class="gt_row gt_right gt_striped" headers="max">5,909.00</td>
-<td class="gt_row gt_right gt_striped" headers="skew">1.54</td>
-<td class="gt_row gt_right gt_striped" headers="kurtosis">5.80</td>
-</tr>
-<tr class="odd">
-<td class="gt_row gt_left" headers="variable">elevation</td>
-<td class="gt_row gt_right" headers="n">18,044.00</td>
-<td class="gt_row gt_right" headers="mean">351.75</td>
-<td class="gt_row gt_right" headers="sd">416.26</td>
-<td class="gt_row gt_right" headers="median">171.00</td>
-<td class="gt_row gt_right" headers="trimmed">268.85</td>
-<td class="gt_row gt_right" headers="min">0.00</td>
-<td class="gt_row gt_right" headers="max">3,817.00</td>
-<td class="gt_row gt_right" headers="skew">1.84</td>
-<td class="gt_row gt_right" headers="kurtosis">3.44</td>
-</tr>
-<tr class="even">
-<td class="gt_row gt_left gt_striped" headers="variable">vapor_min</td>
-<td class="gt_row gt_right gt_striped" headers="n">18,044.00</td>
-<td class="gt_row gt_right gt_striped" headers="mean">93.99</td>
-<td class="gt_row gt_right gt_striped" headers="sd">58.79</td>
-<td class="gt_row gt_right gt_striped" headers="median">71.00</td>
-<td class="gt_row gt_right gt_striped" headers="trimmed">83.74</td>
-<td class="gt_row gt_right gt_striped" headers="min">12.00</td>
-<td class="gt_row gt_right gt_striped" headers="max">352.00</td>
-<td class="gt_row gt_right gt_striped" headers="skew">1.53</td>
-<td class="gt_row gt_right gt_striped" headers="kurtosis">1.53</td>
+<td class="gt_row gt_left gt_striped" headers="variable">canopy_cover</td>
+<td class="gt_row gt_right gt_striped" headers="n">7,107.00</td>
+<td class="gt_row gt_right gt_striped" headers="mean">34.84</td>
+<td class="gt_row gt_right gt_striped" headers="sd">31.49</td>
+<td class="gt_row gt_right gt_striped" headers="median">28.00</td>
+<td class="gt_row gt_right gt_striped" headers="trimmed">33.13</td>
+<td class="gt_row gt_right gt_striped" headers="min">0.00</td>
+<td class="gt_row gt_right gt_striped" headers="max">92.00</td>
+<td class="gt_row gt_right gt_striped" headers="skew">0.29</td>
+<td class="gt_row gt_right gt_striped" headers="kurtosis">−1.51</td>
 </tr>
 <tr class="odd">
 <td class="gt_row gt_left" headers="variable">northness</td>
@@ -802,99 +784,123 @@ Rob Wiederstein
 </tr>
 <tr class="even">
 <td class="gt_row gt_left gt_striped" headers="variable">eastness</td>
-<td class="gt_row gt_right gt_striped" headers="n">18,044.00</td>
-<td class="gt_row gt_right gt_striped" headers="mean">0.79</td>
-<td class="gt_row gt_right gt_striped" headers="sd">69.02</td>
-<td class="gt_row gt_right gt_striped" headers="median">0.00</td>
-<td class="gt_row gt_right gt_striped" headers="trimmed">0.95</td>
+<td class="gt_row gt_right gt_striped" headers="n">7,107.00</td>
+<td class="gt_row gt_right gt_striped" headers="mean">−3.89</td>
+<td class="gt_row gt_right gt_striped" headers="sd">69.44</td>
+<td class="gt_row gt_right gt_striped" headers="median">−4.00</td>
+<td class="gt_row gt_right gt_striped" headers="trimmed">−4.79</td>
 <td class="gt_row gt_right gt_striped" headers="min">−100.00</td>
 <td class="gt_row gt_right gt_striped" headers="max">100.00</td>
-<td class="gt_row gt_right gt_striped" headers="skew">−0.01</td>
-<td class="gt_row gt_right gt_striped" headers="kurtosis">−1.43</td>
+<td class="gt_row gt_right gt_striped" headers="skew">0.08</td>
+<td class="gt_row gt_right gt_striped" headers="kurtosis">−1.46</td>
 </tr>
 <tr class="odd">
-<td class="gt_row gt_left" headers="variable">canopy_cover</td>
-<td class="gt_row gt_right" headers="n">18,044.00</td>
-<td class="gt_row gt_right" headers="mean">49.72</td>
-<td class="gt_row gt_right" headers="sd">32.46</td>
-<td class="gt_row gt_right" headers="median">54.00</td>
-<td class="gt_row gt_right" headers="trimmed">50.18</td>
-<td class="gt_row gt_right" headers="min">0.00</td>
-<td class="gt_row gt_right" headers="max">100.00</td>
-<td class="gt_row gt_right" headers="skew">−0.16</td>
-<td class="gt_row gt_right" headers="kurtosis">−1.39</td>
+<td class="gt_row gt_left" headers="variable">vapor_max</td>
+<td class="gt_row gt_right" headers="n">7,107.00</td>
+<td class="gt_row gt_right" headers="mean">1,109.70</td>
+<td class="gt_row gt_right" headers="sd">354.75</td>
+<td class="gt_row gt_right" headers="median">1,082.00</td>
+<td class="gt_row gt_right" headers="trimmed">1,102.57</td>
+<td class="gt_row gt_right" headers="min">306.00</td>
+<td class="gt_row gt_right" headers="max">2,020.00</td>
+<td class="gt_row gt_right" headers="skew">0.13</td>
+<td class="gt_row gt_right" headers="kurtosis">−1.12</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left gt_striped" headers="variable">dew_temp</td>
-<td class="gt_row gt_right gt_striped" headers="n">18,044.00</td>
-<td class="gt_row gt_right gt_striped" headers="mean">8.44</td>
-<td class="gt_row gt_right gt_striped" headers="sd">5.51</td>
-<td class="gt_row gt_right gt_striped" headers="median">10.76</td>
-<td class="gt_row gt_right gt_striped" headers="trimmed">8.88</td>
-<td class="gt_row gt_right gt_striped" headers="min">−14.45</td>
-<td class="gt_row gt_right gt_striped" headers="max">16.19</td>
-<td class="gt_row gt_right gt_striped" headers="skew">−0.59</td>
-<td class="gt_row gt_right gt_striped" headers="kurtosis">−1.09</td>
+<td class="gt_row gt_left gt_striped" headers="variable">precip_annual</td>
+<td class="gt_row gt_right gt_striped" headers="n">7,107.00</td>
+<td class="gt_row gt_right gt_striped" headers="mean">1,146.37</td>
+<td class="gt_row gt_right gt_striped" headers="sd">1,012.37</td>
+<td class="gt_row gt_right gt_striped" headers="median">695.00</td>
+<td class="gt_row gt_right gt_striped" headers="trimmed">986.68</td>
+<td class="gt_row gt_right gt_striped" headers="min">171.00</td>
+<td class="gt_row gt_right gt_striped" headers="max">5,909.00</td>
+<td class="gt_row gt_right gt_striped" headers="skew">1.27</td>
+<td class="gt_row gt_right gt_striped" headers="kurtosis">1.09</td>
 </tr>
 <tr class="odd">
-<td class="gt_row gt_left" headers="variable">temp_january_min</td>
-<td class="gt_row gt_right" headers="n">18,044.00</td>
-<td class="gt_row gt_right" headers="mean">8.38</td>
-<td class="gt_row gt_right" headers="sd">4.63</td>
-<td class="gt_row gt_right" headers="median">10.27</td>
-<td class="gt_row gt_right" headers="trimmed">8.76</td>
-<td class="gt_row gt_right" headers="min">−12.81</td>
-<td class="gt_row gt_right" headers="max">16.30</td>
-<td class="gt_row gt_right" headers="skew">−0.55</td>
+<td class="gt_row gt_left" headers="variable">vapor_min</td>
+<td class="gt_row gt_right" headers="n">7,107.00</td>
+<td class="gt_row gt_right" headers="mean">135.08</td>
+<td class="gt_row gt_right" headers="sd">74.34</td>
+<td class="gt_row gt_right" headers="median">129.00</td>
+<td class="gt_row gt_right" headers="trimmed">132.70</td>
+<td class="gt_row gt_right" headers="min">12.00</td>
+<td class="gt_row gt_right" headers="max">352.00</td>
+<td class="gt_row gt_right" headers="skew">0.24</td>
 <td class="gt_row gt_right" headers="kurtosis">−1.03</td>
 </tr>
 <tr class="even">
 <td class="gt_row gt_left gt_striped" headers="variable">temp_annual_mean</td>
-<td class="gt_row gt_right gt_striped" headers="n">18,044.00</td>
-<td class="gt_row gt_right gt_striped" headers="mean">14.30</td>
-<td class="gt_row gt_right gt_striped" headers="sd">5.06</td>
-<td class="gt_row gt_right gt_striped" headers="median">16.48</td>
-<td class="gt_row gt_right gt_striped" headers="trimmed">14.78</td>
+<td class="gt_row gt_right gt_striped" headers="n">7,107.00</td>
+<td class="gt_row gt_right gt_striped" headers="mean">8.49</td>
+<td class="gt_row gt_right gt_striped" headers="sd">2.39</td>
+<td class="gt_row gt_right gt_striped" headers="median">8.95</td>
+<td class="gt_row gt_right gt_striped" headers="trimmed">8.76</td>
 <td class="gt_row gt_right gt_striped" headers="min">−7.89</td>
-<td class="gt_row gt_right gt_striped" headers="max">20.60</td>
-<td class="gt_row gt_right gt_striped" headers="skew">−0.58</td>
-<td class="gt_row gt_right gt_striped" headers="kurtosis">−1.01</td>
+<td class="gt_row gt_right gt_striped" headers="max">12.63</td>
+<td class="gt_row gt_right gt_striped" headers="skew">−1.03</td>
+<td class="gt_row gt_right gt_striped" headers="kurtosis">0.99</td>
 </tr>
 <tr class="odd">
-<td class="gt_row gt_left" headers="variable">temp_annual_max</td>
-<td class="gt_row gt_right" headers="n">18,044.00</td>
-<td class="gt_row gt_right" headers="mean">20.24</td>
-<td class="gt_row gt_right" headers="sd">5.56</td>
-<td class="gt_row gt_right" headers="median">22.64</td>
-<td class="gt_row gt_right" headers="trimmed">20.81</td>
-<td class="gt_row gt_right" headers="min">−2.98</td>
-<td class="gt_row gt_right" headers="max">26.86</td>
-<td class="gt_row gt_right" headers="skew">−0.64</td>
-<td class="gt_row gt_right" headers="kurtosis">−0.91</td>
+<td class="gt_row gt_left" headers="variable">temp_annual_min</td>
+<td class="gt_row gt_right" headers="n">7,107.00</td>
+<td class="gt_row gt_right" headers="mean">−3.21</td>
+<td class="gt_row gt_right" headers="sd">3.14</td>
+<td class="gt_row gt_right" headers="median">−3.76</td>
+<td class="gt_row gt_right" headers="trimmed">−3.27</td>
+<td class="gt_row gt_right" headers="min">−15.43</td>
+<td class="gt_row gt_right" headers="max">4.50</td>
+<td class="gt_row gt_right" headers="skew">0.25</td>
+<td class="gt_row gt_right" headers="kurtosis">−0.78</td>
 </tr>
 <tr class="even">
-<td class="gt_row gt_left gt_striped" headers="variable">temp_annual_min</td>
-<td class="gt_row gt_right gt_striped" headers="n">18,044.00</td>
-<td class="gt_row gt_right gt_striped" headers="mean">−0.03</td>
-<td class="gt_row gt_right gt_striped" headers="sd">3.52</td>
-<td class="gt_row gt_right gt_striped" headers="median">0.91</td>
-<td class="gt_row gt_right gt_striped" headers="trimmed">0.30</td>
-<td class="gt_row gt_right gt_striped" headers="min">−15.43</td>
-<td class="gt_row gt_right gt_striped" headers="max">6.94</td>
-<td class="gt_row gt_right gt_striped" headers="skew">−0.72</td>
-<td class="gt_row gt_right gt_striped" headers="kurtosis">−0.49</td>
+<td class="gt_row gt_left gt_striped" headers="variable">temp_annual_max</td>
+<td class="gt_row gt_right gt_striped" headers="n">7,107.00</td>
+<td class="gt_row gt_right gt_striped" headers="mean">13.89</td>
+<td class="gt_row gt_right gt_striped" headers="sd">2.82</td>
+<td class="gt_row gt_right gt_striped" headers="median">14.53</td>
+<td class="gt_row gt_right gt_striped" headers="trimmed">14.16</td>
+<td class="gt_row gt_right gt_striped" headers="min">−2.98</td>
+<td class="gt_row gt_right gt_striped" headers="max">19.06</td>
+<td class="gt_row gt_right gt_striped" headers="skew">−0.93</td>
+<td class="gt_row gt_right gt_striped" headers="kurtosis">0.66</td>
 </tr>
 <tr class="odd">
-<td class="gt_row gt_left" headers="variable">vapor_max</td>
-<td class="gt_row gt_right" headers="n">18,044.00</td>
-<td class="gt_row gt_right" headers="mean">1,485.49</td>
-<td class="gt_row gt_right" headers="sd">395.01</td>
-<td class="gt_row gt_right" headers="median">1,628.00</td>
-<td class="gt_row gt_right" headers="trimmed">1,537.97</td>
-<td class="gt_row gt_right" headers="min">306.00</td>
-<td class="gt_row gt_right" headers="max">2,020.00</td>
-<td class="gt_row gt_right" headers="skew">−0.95</td>
-<td class="gt_row gt_right" headers="kurtosis">−0.37</td>
+<td class="gt_row gt_left" headers="variable">elevation</td>
+<td class="gt_row gt_right" headers="n">7,107.00</td>
+<td class="gt_row gt_right" headers="mean">681.42</td>
+<td class="gt_row gt_right" headers="sd">481.97</td>
+<td class="gt_row gt_right" headers="median">618.00</td>
+<td class="gt_row gt_right" headers="trimmed">635.04</td>
+<td class="gt_row gt_right" headers="min">0.00</td>
+<td class="gt_row gt_right" headers="max">3,817.00</td>
+<td class="gt_row gt_right" headers="skew">0.85</td>
+<td class="gt_row gt_right" headers="kurtosis">0.57</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left gt_striped" headers="variable">temp_january_min</td>
+<td class="gt_row gt_right gt_striped" headers="n">7,107.00</td>
+<td class="gt_row gt_right gt_striped" headers="mean">3.10</td>
+<td class="gt_row gt_right gt_striped" headers="sd">2.25</td>
+<td class="gt_row gt_right gt_striped" headers="median">3.19</td>
+<td class="gt_row gt_right gt_striped" headers="trimmed">3.25</td>
+<td class="gt_row gt_right gt_striped" headers="min">−12.81</td>
+<td class="gt_row gt_right gt_striped" headers="max">8.14</td>
+<td class="gt_row gt_right gt_striped" headers="skew">−0.65</td>
+<td class="gt_row gt_right gt_striped" headers="kurtosis">0.53</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="variable">dew_temp</td>
+<td class="gt_row gt_right" headers="n">7,107.00</td>
+<td class="gt_row gt_right" headers="mean">2.17</td>
+<td class="gt_row gt_right" headers="sd">2.86</td>
+<td class="gt_row gt_right" headers="median">1.80</td>
+<td class="gt_row gt_right" headers="trimmed">2.20</td>
+<td class="gt_row gt_right" headers="min">−14.45</td>
+<td class="gt_row gt_right" headers="max">8.56</td>
+<td class="gt_row gt_right" headers="skew">−0.02</td>
+<td class="gt_row gt_right" headers="kurtosis">−0.12</td>
 </tr>
 </tbody>
 </table>
@@ -1171,7 +1177,7 @@ Figure&nbsp;1: The Biophysical Edge: 3-Sigma extremes reveal alpine mixing
         margin: 0.1,
 
         math: {
-          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          mathjax: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js',
           config: 'TeX-AMS_HTML-full',
           tex2jax: {
             inlineMath: [['\\(','\\)']],
@@ -1283,13 +1289,14 @@ Figure&nbsp;1: The Biophysical Edge: 3-Sigma extremes reveal alpine mixing
           e.clearSelection();
         }
         const getTextToCopy = function(trigger) {
-            const codeEl = trigger.previousElementSibling.cloneNode(true);
-            for (const childEl of codeEl.children) {
-              if (isCodeAnnotation(childEl)) {
-                childEl.remove();
-              }
+          const outerScaffold = trigger.parentElement.cloneNode(true);
+          const codeEl = outerScaffold.querySelector('code');
+          for (const childEl of codeEl.children) {
+            if (isCodeAnnotation(childEl)) {
+              childEl.remove();
             }
-            return codeEl.innerText;
+          }
+          return codeEl.innerText;
         }
         const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
           text: getTextToCopy

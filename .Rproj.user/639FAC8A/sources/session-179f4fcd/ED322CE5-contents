@@ -21,7 +21,16 @@ library(gt)
 ```
 
 
-# The Biophysical Audit
+# Introduction
+
+## Research Objectives
+
+1. **Stationarity:**
+   Do the biophysical rules of a forest in the Pacific Northwest hold true in the Deep South?
+
+2. **Spatial Leakage:**
+   Does including Latitude and Longitude create a robust model, or a fragile one that cannot generalize?
+
 ## The `forested` Package
 
 :::: {.columns}
@@ -42,18 +51,18 @@ library(gt)
 **Speaker Notes:**
 * The `forested` package is our primary data source, containing the raw measurements for both the Washington and Georgia "islands".
 * We are auditing this package's features to see how well they predict the 'forested' outcome in two geographically distant locations.
+
 :::
 
 ## The Autocorrelation Trap{text-align="center"}
 
-<br/>
-<br/>
-<br/>
-<br/>
+<br>
+<br>
+<br>
 
-> "Everything is related to everything else, but near things are more related than distant things."
->
+>"Everything is related to everything else, but near things are more related than distant things."
 > — Waldo Tobler (1970)
+
 
 ::: {.notes}
 
