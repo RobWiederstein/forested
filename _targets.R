@@ -5,8 +5,8 @@ library(tarchetypes)
 # --- 1. Options ---
 tar_option_set(
   packages = c(
-    "elevatr", "forested", "ggrepel", "gt", "magrittr",
-    "tidyverse", "patchwork", "psych", "rmapshaper",
+    "elevatr", "forested", "ggcorrplot", "ggrepel", "gt", "magrittr",
+    "tidyverse", "patchwork", "psych", "ranger", "rmapshaper",
     "sf", "terra", "tidyterra", "tigris"
   ),
   format = "rds"
@@ -227,6 +227,130 @@ plot_wa_pca <- function(data) {
     ggplot2::scale_x_continuous(limits = c(-10, 5))
 }
 
+plot_correlations <- function(data) {
+  # 1. Data Prep (Same as before)
+  cor_data <- data %>%
+    sf::st_drop_geometry() %>%
+    dplyr::mutate(Forested_Binary = dplyr::if_else(forested == "Yes", 1, 0)) %>%
+    dplyr::select(Forested_Binary, dplyr::where(is.numeric)) %>% 
+    dplyr::select(-any_of(c("year"))) 
+  
+  cor_df <- cor(cor_data, use = "pairwise.complete.obs") %>%
+    as.data.frame() %>%
+    dplyr::select(correlation = Forested_Binary) %>%
+    tibble::rownames_to_column("variable") %>%
+    dplyr::filter(variable != "Forested_Binary") %>% 
+    dplyr::mutate(
+      sign = dplyr::if_else(correlation > 0, "Positive", "Negative"),
+      is_spatial = dplyr::if_else(variable %in% c("lat", "lon"), "Spatial", "Biophysical")
+    )
+  
+  # 2. Plot with SPACE
+  ggplot2::ggplot(cor_df, aes(x = reorder(variable, correlation), y = correlation)) +
+    ggplot2::geom_segment(aes(xend = variable, yend = 0), color = "gray50") +
+    ggplot2::geom_point(aes(color = sign, shape = is_spatial), size = 5) +
+    
+    ggplot2::coord_flip() +
+    ggplot2::theme_minimal(base_size = 18) +
+    
+    ggplot2::scale_color_manual(values = c("Positive" = "#228B22", "Negative" = "#D2691E")) +
+  
+  ggplot2::labs(
+    title = "What drives the 'Forested' classification?",
+    subtitle = "Correlations with Forested (Yes=1). Note the impact of Latitude.",
+    x = NULL,
+    y = "Correlation Coefficient",
+    color = "Direction",
+    shape = "Variable Type"
+  )
+}
+
+plot_rf_importance <- function(data) {
+  # 1. Clean Data & Fit Model
+  model_data <- data %>%
+    sf::st_drop_geometry() %>%
+    dplyr::select(forested, dplyr::where(is.numeric)) %>%
+    dplyr::select(-any_of(c("year"))) %>%
+    dplyr::mutate(forested = as.factor(forested))
+  
+  rf_model <- ranger::ranger(
+    formula = forested ~ ., 
+    data = model_data, 
+    importance = "permutation",
+    seed = 123
+  )
+  
+  # 2. Extract importance & Add Spatial Flag
+  imp_df <- vip::vi(rf_model) %>%
+    dplyr::mutate(
+      Type = dplyr::if_else(Variable %in% c("lat", "lon"), "Spatial", "Biophysical")
+    )
+  
+  # 3. Tufte-style Lollipop with Shapes
+  ggplot2::ggplot(imp_df, aes(x = Importance, y = reorder(Variable, Importance))) +
+    # Stems
+    ggplot2::geom_segment(aes(xend = 0, yend = Variable), color = "gray60", linewidth = 0.8) +
+    
+    # Dots (Mapped to Shape)
+    ggplot2::geom_point(
+      aes(shape = Type, color = Type), 
+      size = 5
+    ) +
+    
+    # --- VISUAL MAPPING ---
+    # Shapes: Circle (16) for Biophysical, Triangle (17) for Spatial
+    ggplot2::scale_shape_manual(values = c("Biophysical" = 16, "Spatial" = 17)) +
+    # Colors: Forest Green for legit vars, Dark Gray for spatial leakage (optional contrast)
+    ggplot2::scale_color_manual(values = c("Biophysical" = "#228B22", "Spatial" = "black")) +
+    # ----------------------
+  
+  ggplot2::theme_minimal(base_size = 16) +
+    ggplot2::labs(
+      title = "Random Forest Variable Importance",
+      subtitle = "Permutation Importance. Note the high rank of spatial variables.",
+      y = NULL,
+      x = "Importance (Loss in Accuracy if scrambled)",
+      shape = "Variable Type",
+      color = "Variable Type"
+    ) 
+}
+
+plot_umap_forested <- function(data) {
+  
+  data_clean <- data %>%
+    drop_na()
+  
+  numeric_data <- data_clean %>%
+    select(where(is.numeric)) %>%
+    scale()
+  
+  set.seed(42)
+  umap_fit <- umap::umap(numeric_data)
+  
+  # Format for plotting
+  umap_df <- umap_fit$layout %>%
+    as.data.frame() %>%
+    dplyr::rename(UMAP1 = V1, UMAP2 = V2) %>%
+    dplyr::mutate(forested = as.factor(data_clean$forested))
+  
+  # Generate Plot
+  ggplot(umap_df, aes(x = UMAP1, y = UMAP2, color = forested)) +
+    geom_point(alpha = 0.6, size = 1.5) +
+    #scale_color_viridis_d(name = "Forested Status", begin = 0.2, end = 0.8) +
+    scale_color_manual(
+      name = "Forested?",
+      # Assumes factor order is (No, Yes). Swap colors if order differs.
+      values = c("#228B22", "#D2691E")
+    ) +
+    theme_minimal() +
+    labs(
+      title = "UMAP Projection of Forested Areas",
+      subtitle = "Clustering based on numeric landscape features",
+      x = "UMAP Dimension 1",
+      y = "UMAP Dimension 2"
+    )
+}
+
 # --- 3. The Pipeline ---
 list(
   # Data Ingestion
@@ -261,6 +385,14 @@ list(
   
   # PCA Target
   tar_target(plt_wa_pca, plot_wa_pca(forested_wa)),
+  
+  # correlogram
+  tar_target(plt_correlogram, plot_correlations(forested_wa)),
+  
+  # vip plot
+  tar_target(plt_vip, plot_rf_importance(forested_wa)),
+  # umap plot
+  tar_target(umap_plot, plot_umap_forested(forested_wa)),
   
   # Report
   tar_quarto(report, "index.qmd", quiet = FALSE)

@@ -240,3 +240,69 @@ Yes, the separation is significant. We see a distinct 'No' (Non-Forested) cluste
 This separation foreshadows high accuracy for our local Washington model. Because the classes are so distinct in this space, a logistic regression should have no trouble drawing a boundary between them. However, the tight coupling of biophysics with coordinates (lat/lon) here warns us that the model might 'memorize' Washington's map, which will be the primary challenge when we attempt to transfer it to Georgia.
 :::
 
+## Correlogram
+
+```{r}
+#| label: correlogram
+tar_read(plt_correlogram)
+```
+
+::: {.notes}
+**1. Orientation**
+- If you look at the very first column on the left, we can see exactly what drives our "Forested" classification.
+- Blue means "More Forest," Orange means "Less Forest."
+
+**2. The Sanity Check**
+- First, look at the bottom square: **Canopy Cover (0.75)**.
+- This is our sanity check. Obviously, forests have high canopy cover. If this wasn't blue, our data would be broken.
+
+**3. The Biophysical Story: Water vs. Heat**
+- The real story is the battle between water and heat.
+- **Precipitation (0.52)** is a strong blue driver. In Washington, rain equals trees.
+- **Vapor Pressure (-0.64)** is a deep orange driver. High vapor pressure—which correlates with hot, dry valleys—effectively kills the forest probability.
+
+**4. The Terrain Factor**
+- Look at **Roughness (0.39)**.
+- Rugged, difficult terrain is more likely to be forested. This is likely a mix of biophysics (mountains catch rain) and human history (flat land gets cleared for farming).
+
+**5. The Surprise**
+- Finally, look at **Northness and Eastness**. They are near **zero**.
+- This tells us that while the *direction* a slope faces might change *which* trees grow there, it doesn't determine *if* trees grow there.
+:::
+
+## VIP
+
+```{r}
+#| label: variable-importance-plt
+tar_read(plt_vip)
+```
+
+::: {.notes}
+**1. The Comparison**
+
+- "We just looked at Correlations (linear relationships). Now let's look at Variable Importance via Random Forest. This is what the model actually uses to make decisions."
+
+**2. The Consistency**
+
+- "The top three are the same: Canopy Cover, Rain, and Aridity (Vapor Pressure). This confirms our model is learning real biophysics."
+
+**3. Spatial Factors**
+
+- "But look at number 4: **Longitude**."
+
+- "In the correlation chart, Longitude was just a moderate factor. Here, it is massive."
+
+- "The model has learned that Washington is divided into two distinct climate zones—West and East."
+
+- "Instead of learning the physics of *why* trees grow there, it's partially just memorizing *where* they grow. This confirms our hypothesis: the model is using geography as a shortcut. And is worth remembering when we apply it to the Georgia data.
+
+:::
+
+## UMAP
+
+```{r}
+#| label: umap-plot
+tar_read(umap_plot)
+```
+
+
