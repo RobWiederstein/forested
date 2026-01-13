@@ -1,5 +1,5 @@
 ---
-title: "Forested Project"
+title: "Optimism Bias in Ecological Modeling"
 author: "Rob Wiederstein"
 format: 
   revealjs:
@@ -368,7 +368,35 @@ Forests are "clumpy." If you stand next to a Douglas Fir in Washington and take 
 
 :::
 
+## Cross Validation Strategies
 
+```{r}
+#| label: fig-cv-strategies
+#| echo: false
+#| fig-width: 14
+#| fig-height: 5
+#| out-width: "100%"
+#| fig-cap: "Three validation strategies. **Left:** Random splitting mixes train/test points. **Middle:** Spatial blocking forces geographic separation. **Right:** Clustering blocks by environmental similarity. (Note the outline for the Columbia Plateau. See @fig-ecoregion-comparison.)"
+
+tar_read(plot_cv_comparison)
+```
+
+::: {.notes}
+**1. Left Panel: Random CV (The Illusion of Accuracy)**
+- This visualizes why Random CV yields **over-optimistic estimates**.
+- Because the colors are mixed (Random), the model can accurately predict a "Red" point simply by memorizing the "Blue" point next to it.
+- This isn't "true" predictive power; it is **autocorrelation leakage**. The model is interpolating neighbors rather than learning the underlying ecological rules.
+
+**2. Middle Panel: Spatial Blocking (Forcing Independence)**
+- To get a **realistic assessment**, we must enforce spatial independence.
+- The grid structure ensures that the test data (Red blocks) is geographically distinct from the training data.
+- The performance score will likely drop compared to the first map, but that lower score is **more accurate**. It reflects how the model will actually perform on a new, unvisited site.
+
+**3. Right Panel: Environmental Clustering (Testing Generalization)**
+- This strategy tests for **ecological generalization**.
+- Notice the large red area in the southeast—the algorithm identified the **Columbia Plateau** as a distinct environment.
+- By holding out entire environments (e.g., training on "Wet Coastal" to predict "Dry Plateau"), we test if the model captures the fundamental biological relationships (e.g., how temp/rain affect trees) rather than just memorizing geographic trends.
+:::
 
 
 ## References

@@ -17,9 +17,11 @@ tar_option_set(
     "ranger", 
     "rmapshaper",
     "sf",
+    "spatialsample",
     "stringr",
     "terra", 
-    "tidyterra", 
+    "tidyterra",
+    "tidymodels",
     "tidyverse",
     "tigris"
   ),
@@ -165,7 +167,7 @@ process_ecoregions <- function(zip_path, target_states = c("Washington", "Georgi
   return(eco_clean)
 }
 
-plot_ecoregion_comparison <- function(eco_data) {
+plot_ecoregion_comparison <- function(eco_data){
   require(ggplot2)
   require(patchwork)
   require(ggrepel)
@@ -501,6 +503,87 @@ plot_umap_forested <- function(data) {
     )
 }
 
+plot_cv_strategies <- function(data) {
+  
+  # 1. SETUP DATA & ADD ID
+  # We MUST add an ID column to track rows across splits
+  forested_sf <- st_as_sf(
+    data, 
+    coords = c("lon", "lat"), 
+    crs = 4326, 
+    remove = FALSE 
+  ) %>%
+    mutate(id = row_number()) # <--- Critical: Adds the ID we need later
+  
+  # 2. DEFINE CUSTOM ECOLOGICAL DISTANCE
+  dist_env <- function(x) {
+    x %>%
+      st_drop_geometry() %>%
+      select(elevation, precip_annual, temp_annual_mean, roughness) %>%
+      scale() %>% 
+      dist()
+  }
+  
+  # 3. CREATE THE SPLITS
+  set.seed(42)
+  
+  # A. Random
+  random_folds <- vfold_cv(forested_sf, v = 5)
+  
+  # B. Spatial Block
+  spatial_folds <- spatial_block_cv(forested_sf, v = 5)
+  
+  # C. Environmental Clustering
+  cluster_folds <- spatial_clustering_cv(
+    forested_sf,
+    v = 5,
+    cluster_function = "hclust", 
+    distance_function = dist_env
+  )
+  
+  # 4. HELPER: EXTRACT FOLD IDs
+  # This assigns a Fold Number (1-5) to every single point
+  get_fold_ids <- function(splits, original_data) {
+    results <- original_data %>% 
+      mutate(fold = NA_character_)
+    
+    for(i in seq_along(splits$splits)) {
+      test_ids <- assessment(splits$splits[[i]]) %>% pull(id)
+      results <- results %>%
+        mutate(fold = ifelse(id %in% test_ids, as.character(i), fold))
+    }
+    return(results)
+  }
+  
+  # 5. PREPARE PLOTTING DATA
+  df_random  <- get_fold_ids(random_folds, forested_sf)
+  df_spatial <- get_fold_ids(spatial_folds, forested_sf)
+  df_cluster <- get_fold_ids(cluster_folds, forested_sf)
+  
+  # 6. COMMON PLOT FUNCTION
+  plot_folds <- function(df, title) {
+    ggplot(df) +
+      geom_sf(aes(color = fold), size = 0.5, alpha = 0.6) +
+      scale_color_brewer(palette = "Set1", name = "Fold") + # <--- The Rainbow Colors
+      #scale_color_discrete_qualitative(palette = "Harmonic", name = "Fold") +
+      #scale_color_discrete_qualitative(palette = "Dark 3", name = "Fold") +
+      #scale_color_discrete_qualitative(palette = "Dynamic", name = "Fold") +
+      ggtitle(title) +
+      theme_void() + 
+      theme(
+        plot.title = element_text(hjust = 0.5, face = "bold", size = 12),
+        legend.position = "none" 
+      )
+  }
+  
+  # 7. GENERATE & COMBINE
+  p1 <- plot_folds(df_random, "Random\n(Confetti)")
+  p2 <- plot_folds(df_spatial, "Spatial Block\n(Checkerboard)")
+  p3 <- plot_folds(df_cluster, "Env. Clustering\n(Ecoregions)")
+  
+  p1 + p2 + p3 + plot_layout(ncol = 3)
+}
+
 # --- 3. The Pipeline ---
 list(
   # Data Ingestion
@@ -557,6 +640,7 @@ list(
                      ),
     format = "file"
   ),
+  tar_target(plot_cv_comparison, plot_cv_strategies(forested_wa)),
   # Analysis
   tar_target(data_summary, create_stats_summary(forested_wa)),
   tar_target(tbl_wa_summary, style_audit_table(data_summary, title = "WA Summary")),
