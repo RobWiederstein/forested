@@ -30,21 +30,31 @@ plot_correlogram|function|3762471b495a4433
 plot_forested_correlations|function|ea4e7c3e684a7002
 plt_correlogram|stem|509cd76dbcb584ee|b2581b685857d978|2bced228538ffe20|-1452654926||t20461.5695053345s|s882948b|882948|rds|local|vector|||0.069||
 plt_vip|stem|f9b9ae16348e2849|b1335ae312db100e|c52b4039ec2aa5f4|-623821603||t20461.6160325902s|s3110020b|3110020|rds|local|vector|||1.381||
+umap_plot|stem|44e62c149706f689|956b2dbfb97cc8af|2c491a9a606656d5|863757455||t20462.5206051323s|s3093894b|3093894|rds|local|vector|||19.576||
+eco_url|stem|ce8fd06148e7efc9|6921441170bbcaf4|2c530c1562a7fbd1|1416681613|https://dmap-prod-oms-edc.s3.us-east-1.amazonaws.com/ORD/Ecoregions/us/us_eco_l3.zip|t20466.4706161597s||0|url|local|vector|||2.855||
+data_dir|stem|7a2029d44824ed58|8b01b39059520a55|2c530c1562a7fbd1|-145075625|data/epa|t20465.4869941458s|s28424315b|28424315|file|local|vector|||2.792||
+eco_zip_file|stem|7a2029d44824ed58|0d9de255d7043609|34ef97e6cbe8f300|-209742487|data/epa/us_eco_l3.zip|t20465.4869941458s|s28424315b|28424315|file|local|vector|||0||
+eco_data|stem|c7b8927eac76887f|58cc8f03affd8acd|7c24ffd8eec933da|1985198847||t20466.4737935522s|s80490b|80490|rds|local|vector|||4.169|attribute variables are assumed to be spatially constant throughout all geometries|
+plot_comparison|stem|65040364ac1da344|f5da256040b0baea|46647d2df089844a|-1523103675||t20466.4738000915s|s1555530b|1555530|rds|local|vector|||0.274|There were 2 warnings in `stopifnot()`. The first warning was: ℹ In argument: `lon = st_coordinates(st_point_on_surface(geometry))[, 1]`. Caused by warning in `st_point_on_surface.sfc()`: ! st_point_on_surface may not give correct results for longitude/latitude data ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning.. There were 2 warnings in `stopifnot()`. The first warning was: ℹ In argument: `lon = st_coordinates(st_point_on_surface(geometry))[, 1]`. Caused by warning in `st_point_on_surface.sfc()`: ! st_point_on_surface may not give correct results for longitude/latitude data ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning.|
+map_ecoregion_comparison|stem|c4053130508dfb56|f5da256040b0baea|cdd1df7afd81e49f|-2123837280||t20466.4974190666s|s1558176b|1558176|rds|local|vector|||0.296|There were 2 warnings in `stopifnot()`. The first warning was: ℹ In argument: `lon = st_coordinates(st_point_on_surface(geometry))[, 1]`. Caused by warning in `st_point_on_surface.sfc()`: ! st_point_on_surface may not give correct results for longitude/latitude data ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning.. There were 2 warnings in `stopifnot()`. The first warning was: ℹ In argument: `lon = st_coordinates(st_point_on_surface(geometry))[, 1]`. Caused by warning in `st_point_on_surface.sfc()`: ! st_point_on_surface may not give correct results for longitude/latitude data ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning.|
+save_plot|stem|cc733d65e707e6cb|079f826d8670d4ea|e3f12f925897046f|-1898771178|figs/ecoregion_comparison.png|t20466.4975689144s|s542381b|542381|file|local|vector|||0.55||
 create_elevation_raster|function|e7d31314aac3a488
 save_outlier_map_png|function|99cfc3aa6549d766
 compare_univariate_distribution|function|1df38f6bada1c2a4
 plot_correlations|function|43907d01dbc25e12
 identify_outliers|function|7525c8052a54d542
+plot_ecoregion_comparison|function|23305446616e4e8d
 combine_forest|function|d707f456a058f32f
-.Random.seed|object|63aac64161bd3930
+.Random.seed|object|d7786476fe55ff96
 style_audit_table|function|df7394dd76b3f20b
 plot_regional_comparison|function|8abbfc2cff115692
 plot_wa_pca|function|11e48cc6dfd51624
 create_stats_summary|function|a4f84db37b415ee6
+process_ecoregions|function|e2cb3ab659ffc335
 draw_us_map|function|1ea38e7c3869ad7a
 plot_umap_forested|function|ec26c78516d2be89
 fetch_study_area|function|f3f83066daf7fb26
+get_epa_ecoregions|function|76add3e9b8752264
 fetch_state_boundary|function|336301eea35df9d3
 plot_rf_importance|function|26ee16546862388c
-umap_plot|stem|44e62c149706f689|956b2dbfb97cc8af|2c491a9a606656d5|863757455||t20462.5206051323s|s3093894b|3093894|rds|local|vector|||19.576||
-report|stem|11feec249e59c413|e6d1b12c9770c121|e1067fa563beaa2c|787668912|index_files*index.html*index.qmd|t20462.5207278971s|s15045419b|15045419|file|local|vector|||9.592||
+report|stem|e5f8405376960da9|db88d7e8a2b0f5c9|ec2dad499f4239f8|787668912|index_files*index.html*index.qmd|t20466.7824521053s|s15438194b|15438194|file|local|vector|||10.862||

@@ -11,6 +11,10 @@ format:
       buttons: true
 execute:
   echo: false
+bibliography: references.bib
+csl: ieee-access.csl
+nocite: |
+  @*
 ---
 
 ```{r}
@@ -19,6 +23,7 @@ execute:
 library(targets)
 library(gt)
 ```
+
 
 
 # Introduction
@@ -134,6 +139,34 @@ tar_read(map_us)
 tar_read(map_wa_ga)
 ```
 
+
+## Ecoregion Complexity: West vs. East
+
+```{r}
+#| label: fig-ecoregion-comparison
+#| echo: false
+#| message: false
+#| warning: false
+#| column: screen-inset
+#| out-width: "100%"
+#| fig-width: 14
+#| fig-height: 6.5
+#| fig-align: "center"
+#| fig-cap: "Level III Ecoregions: A comparison of western complexity (WA) vs. eastern stratification (GA). Data sourced from U.S. EPA Level III Ecoregions [@epa_ecoregions_2013; @omernik_ecoregions_1987]."
+
+library(targets)
+tar_read(map_ecoregion_comparison)
+
+```
+
+:::{.notes}
+- Ecoregions denote areas with similar ecosystems and resources.
+- The EPA defines 105 Level III regions for management.
+- James Omernik drew these lines using holistic expert synthesis.
+- Washington and Georgia share zero common ecoregions.
+- Washington transitions rapidly from rainforests to arid deserts.
+- This extreme heterogeneity makes random spatial modeling difficult.
+:::
 
 # Explore
 ## Descriptive Summary
@@ -306,3 +339,39 @@ tar_read(umap_plot)
 ```
 
 
+# Resampling
+
+## Spatial Autocorrelation
+
+>"When data are not independent (e.g. due to spatial autocorrelation), random cross-validation yields optimistic estimates of predictive performance because training and test sets are not independent."[@roberts_crossvalidation_2017]
+
+:::{.notes}
+**1. Translation of the Quote**
+
+This quote describes the "Golden Rule" of geography: "Everything is related to everything else, but near things are more related than distant things."
+
+**2. Definition: Spatial Autocorrelation**
+
+Spatial Autocorrelation just means that data points close to each other are practically clones. If it's raining at your house, it's probably raining at your neighbor's house.
+
+**3. forested dataset**
+
+Forests are "clumpy." If you stand next to a Douglas Fir in Washington and take one step to the left, you are almost certainly still in a forest. The elevation, soil, and rain are identical.
+
+**4. Why Random CV is "Optimistic" (The Cheating)**
+
+- When the standard **Random Cross-Validation** is used, the first tree is assigned to the "Study Group" and the second tree (one step away) to the "Test Group."
+
+- The model doesn't learn ecology. It just looks at the neighbor (lat and lon) and copies the answer.
+
+- This gives us an **"Optimistic Estimate"**—a fancy way of saying our high score was fake because the model was cheating off its neighbor.
+
+:::
+
+
+
+
+## References
+
+::: {#refs}
+:::

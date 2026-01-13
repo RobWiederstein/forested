@@ -28,7 +28,27 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
-  </style>
+    /* CSS for citations */
+    div.csl-bib-body { }
+    div.csl-entry {
+      clear: both;
+      margin-bottom: 0em;
+    }
+    .hanging-indent div.csl-entry {
+      margin-left:2em;
+      text-indent:-2em;
+    }
+    div.csl-left-margin {
+      min-width:2em;
+      float:left;
+    }
+    div.csl-right-inline {
+      margin-left:2em;
+      padding-left:1em;
+    }
+    div.csl-indent {
+      margin-left: 2em;
+    }  </style>
   <link rel="stylesheet" href="index_files/libs/revealjs/dist/theme/quarto-534cd8e3a96973385dffff3f4709048d.css">
   <link href="index_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="index_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
@@ -267,7 +287,33 @@ Rob Wiederstein
 <section id="regional-forestation" class="slide level2">
 <h2>Regional Forestation</h2>
 
-<img data-src="index_files/figure-revealjs/Map%20of%20Georgia%20and%20Washington-1.png" width="960" class="r-stretch quarto-figure-center"><p class="caption">Caution: States are rescaled independently to maximize clarity.</p></section></section>
+<img data-src="index_files/figure-revealjs/Map%20of%20Georgia%20and%20Washington-1.png" width="960" class="r-stretch quarto-figure-center"><p class="caption">Caution: States are rescaled independently to maximize clarity.</p></section>
+<section id="ecoregion-complexity-west-vs.-east" class="slide level2">
+<h2>Ecoregion Complexity: West vs.&nbsp;East</h2>
+
+<img data-src="index_files/figure-revealjs/fig-ecoregion-comparison-1.png" class="quarto-figure quarto-figure-center r-stretch" style="width:100.0%" id="fig-ecoregion-comparison"><p class="caption">
+Figure&nbsp;1: Level III Ecoregions: A comparison of western complexity (WA) vs.&nbsp;eastern stratification (GA). Data sourced from U.S. EPA Level III Ecoregions <span class="citation" data-cites="epa_ecoregions_2013 omernik_ecoregions_1987"><a href="#/references" role="doc-biblioref" onclick="">[1]</a>, <a href="#/references" role="doc-biblioref" onclick="">[2]</a></span>.
+</p><aside class="notes">
+<ul>
+<li>Ecoregions denote areas with similar ecosystems and resources.</li>
+<li>The EPA defines 105 Level III regions for management.</li>
+<li>James Omernik drew these lines using holistic expert synthesis.</li>
+<li>Washington and Georgia share zero common ecoregions.</li>
+<li>Washington transitions rapidly from rainforests to arid deserts.</li>
+<li>This extreme heterogeneity makes random spatial modeling difficult.</li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section></section>
 <section>
 <section id="explore" class="title-slide slide level1 center">
 <h1>Explore</h1>
@@ -277,23 +323,23 @@ Rob Wiederstein
 <h2>Descriptive Summary</h2>
 <div class="cell">
 <div class="cell-output-display">
-<div id="vtrneciuoy" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#vtrneciuoy table {
+<div id="uphlgddfdb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#uphlgddfdb table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#vtrneciuoy thead, #vtrneciuoy tbody, #vtrneciuoy tfoot, #vtrneciuoy tr, #vtrneciuoy td, #vtrneciuoy th {
+#uphlgddfdb thead, #uphlgddfdb tbody, #uphlgddfdb tfoot, #uphlgddfdb tr, #uphlgddfdb td, #uphlgddfdb th {
   border-style: none;
 }
 
-#vtrneciuoy p {
+#uphlgddfdb p {
   margin: 0;
   padding: 0;
 }
 
-#vtrneciuoy .gt_table {
+#uphlgddfdb .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -319,12 +365,12 @@ Rob Wiederstein
   border-left-color: #D3D3D3;
 }
 
-#vtrneciuoy .gt_caption {
+#uphlgddfdb .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#vtrneciuoy .gt_title {
+#uphlgddfdb .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -336,7 +382,7 @@ Rob Wiederstein
   border-bottom-width: 0;
 }
 
-#vtrneciuoy .gt_subtitle {
+#uphlgddfdb .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -348,7 +394,7 @@ Rob Wiederstein
   border-top-width: 0;
 }
 
-#vtrneciuoy .gt_heading {
+#uphlgddfdb .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -360,13 +406,13 @@ Rob Wiederstein
   border-right-color: #D3D3D3;
 }
 
-#vtrneciuoy .gt_bottom_border {
+#uphlgddfdb .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#vtrneciuoy .gt_col_headings {
+#uphlgddfdb .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -381,7 +427,7 @@ Rob Wiederstein
   border-right-color: #D3D3D3;
 }
 
-#vtrneciuoy .gt_col_heading {
+#uphlgddfdb .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -401,7 +447,7 @@ Rob Wiederstein
   overflow-x: hidden;
 }
 
-#vtrneciuoy .gt_column_spanner_outer {
+#uphlgddfdb .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -413,15 +459,15 @@ Rob Wiederstein
   padding-right: 4px;
 }
 
-#vtrneciuoy .gt_column_spanner_outer:first-child {
+#uphlgddfdb .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#vtrneciuoy .gt_column_spanner_outer:last-child {
+#uphlgddfdb .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#vtrneciuoy .gt_column_spanner {
+#uphlgddfdb .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -433,11 +479,11 @@ Rob Wiederstein
   width: 100%;
 }
 
-#vtrneciuoy .gt_spanner_row {
+#uphlgddfdb .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#vtrneciuoy .gt_group_heading {
+#uphlgddfdb .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -463,7 +509,7 @@ Rob Wiederstein
   text-align: left;
 }
 
-#vtrneciuoy .gt_empty_group_heading {
+#uphlgddfdb .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -478,15 +524,15 @@ Rob Wiederstein
   vertical-align: middle;
 }
 
-#vtrneciuoy .gt_from_md > :first-child {
+#uphlgddfdb .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#vtrneciuoy .gt_from_md > :last-child {
+#uphlgddfdb .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#vtrneciuoy .gt_row {
+#uphlgddfdb .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -505,7 +551,7 @@ Rob Wiederstein
   overflow-x: hidden;
 }
 
-#vtrneciuoy .gt_stub {
+#uphlgddfdb .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -518,7 +564,7 @@ Rob Wiederstein
   padding-right: 5px;
 }
 
-#vtrneciuoy .gt_stub_row_group {
+#uphlgddfdb .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -532,15 +578,15 @@ Rob Wiederstein
   vertical-align: top;
 }
 
-#vtrneciuoy .gt_row_group_first td {
+#uphlgddfdb .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#vtrneciuoy .gt_row_group_first th {
+#uphlgddfdb .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#vtrneciuoy .gt_summary_row {
+#uphlgddfdb .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -550,16 +596,16 @@ Rob Wiederstein
   padding-right: 5px;
 }
 
-#vtrneciuoy .gt_first_summary_row {
+#uphlgddfdb .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#vtrneciuoy .gt_first_summary_row.thick {
+#uphlgddfdb .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#vtrneciuoy .gt_last_summary_row {
+#uphlgddfdb .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -569,7 +615,7 @@ Rob Wiederstein
   border-bottom-color: #D3D3D3;
 }
 
-#vtrneciuoy .gt_grand_summary_row {
+#uphlgddfdb .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -579,7 +625,7 @@ Rob Wiederstein
   padding-right: 5px;
 }
 
-#vtrneciuoy .gt_first_grand_summary_row {
+#uphlgddfdb .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -589,7 +635,7 @@ Rob Wiederstein
   border-top-color: #D3D3D3;
 }
 
-#vtrneciuoy .gt_last_grand_summary_row_top {
+#uphlgddfdb .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -599,11 +645,11 @@ Rob Wiederstein
   border-bottom-color: #D3D3D3;
 }
 
-#vtrneciuoy .gt_striped {
+#uphlgddfdb .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#vtrneciuoy .gt_table_body {
+#uphlgddfdb .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -612,7 +658,7 @@ Rob Wiederstein
   border-bottom-color: #D3D3D3;
 }
 
-#vtrneciuoy .gt_footnotes {
+#uphlgddfdb .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -626,7 +672,7 @@ Rob Wiederstein
   border-right-color: #D3D3D3;
 }
 
-#vtrneciuoy .gt_footnote {
+#uphlgddfdb .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -635,7 +681,7 @@ Rob Wiederstein
   padding-right: 5px;
 }
 
-#vtrneciuoy .gt_sourcenotes {
+#uphlgddfdb .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -649,7 +695,7 @@ Rob Wiederstein
   border-right-color: #D3D3D3;
 }
 
-#vtrneciuoy .gt_sourcenote {
+#uphlgddfdb .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -657,72 +703,72 @@ Rob Wiederstein
   padding-right: 5px;
 }
 
-#vtrneciuoy .gt_left {
+#uphlgddfdb .gt_left {
   text-align: left;
 }
 
-#vtrneciuoy .gt_center {
+#uphlgddfdb .gt_center {
   text-align: center;
 }
 
-#vtrneciuoy .gt_right {
+#uphlgddfdb .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#vtrneciuoy .gt_font_normal {
+#uphlgddfdb .gt_font_normal {
   font-weight: normal;
 }
 
-#vtrneciuoy .gt_font_bold {
+#uphlgddfdb .gt_font_bold {
   font-weight: bold;
 }
 
-#vtrneciuoy .gt_font_italic {
+#uphlgddfdb .gt_font_italic {
   font-style: italic;
 }
 
-#vtrneciuoy .gt_super {
+#uphlgddfdb .gt_super {
   font-size: 65%;
 }
 
-#vtrneciuoy .gt_footnote_marks {
+#uphlgddfdb .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#vtrneciuoy .gt_asterisk {
+#uphlgddfdb .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#vtrneciuoy .gt_indent_1 {
+#uphlgddfdb .gt_indent_1 {
   text-indent: 5px;
 }
 
-#vtrneciuoy .gt_indent_2 {
+#uphlgddfdb .gt_indent_2 {
   text-indent: 10px;
 }
 
-#vtrneciuoy .gt_indent_3 {
+#uphlgddfdb .gt_indent_3 {
   text-indent: 15px;
 }
 
-#vtrneciuoy .gt_indent_4 {
+#uphlgddfdb .gt_indent_4 {
   text-indent: 20px;
 }
 
-#vtrneciuoy .gt_indent_5 {
+#uphlgddfdb .gt_indent_5 {
   text-indent: 25px;
 }
 
-#vtrneciuoy .katex-display {
+#uphlgddfdb .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#vtrneciuoy div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#uphlgddfdb div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -941,7 +987,7 @@ Rob Wiederstein
 <h2>Map Outliers</h2>
 
 <img data-src="figs/wa_outliers.png" style="width:100.0%" class="r-stretch quarto-figure-center" id="fig-wa-outliers"><p class="caption">
-Figure&nbsp;1: The Biophysical Edge: 3-Sigma extremes reveal alpine mixing
+Figure&nbsp;2: The Biophysical Edge: 3-Sigma extremes reveal alpine mixing
 </p><aside class="notes">
 <p><strong>1. Topic Introduction</strong> * This map visualizes our “3-Sigma” outliers, which are heavily concentrated along the mountainous west side of the state.</p>
 <p><strong>2. The Orographic Factor</strong> * The concentration on the west is driven by the Cascades and Olympics. These regions host our most extreme biophysical values for precipitation and elevation.</p>
@@ -1040,8 +1086,57 @@ Figure&nbsp;1: The Biophysical Edge: 3-Sigma extremes reveal alpine mixing
 <section id="umap" class="slide level2">
 <h2>UMAP</h2>
 
-
 <img data-src="index_files/figure-revealjs/umap-plot-1.png" width="960" class="r-stretch"></section></section>
+<section>
+<section id="resampling" class="title-slide slide level1 center">
+<h1>Resampling</h1>
+
+</section>
+<section id="spatial-autocorrelation" class="slide level2">
+<h2>Spatial Autocorrelation</h2>
+<blockquote>
+<p>“When data are not independent (e.g.&nbsp;due to spatial autocorrelation), random cross-validation yields optimistic estimates of predictive performance because training and test sets are not independent.”<span class="citation" data-cites="roberts_crossvalidation_2017"><a href="#/references" role="doc-biblioref" onclick="">[3]</a></span></p>
+</blockquote>
+<aside class="notes">
+<p><strong>1. Translation of the Quote</strong></p>
+<p>This quote describes the “Golden Rule” of geography: “Everything is related to everything else, but near things are more related than distant things.”</p>
+<p><strong>2. Definition: Spatial Autocorrelation</strong></p>
+<p>Spatial Autocorrelation just means that data points close to each other are practically clones. If it’s raining at your house, it’s probably raining at your neighbor’s house.</p>
+<p><strong>3. forested dataset</strong></p>
+<p>Forests are “clumpy.” If you stand next to a Douglas Fir in Washington and take one step to the left, you are almost certainly still in a forest. The elevation, soil, and rain are identical.</p>
+<p><strong>4. Why Random CV is “Optimistic” (The Cheating)</strong></p>
+<ul>
+<li><p>When the standard <strong>Random Cross-Validation</strong> is used, the first tree is assigned to the “Study Group” and the second tree (one step away) to the “Test Group.”</p></li>
+<li><p>The model doesn’t learn ecology. It just looks at the neighbor (lat and lon) and copies the answer.</p></li>
+<li><p>This gives us an <strong>“Optimistic Estimate”</strong>—a fancy way of saying our high score was fake because the model was cheating off its neighbor.</p></li>
+</ul>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="references" class="slide level2 smaller scrollable">
+<h2>References</h2>
+<div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
+<div id="ref-epa_ecoregions_2013" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline">U.S. Environmental Protection Agency, <span>“Level <span>III</span> and <span>IV Ecoregions</span> of the <span>Continental United States</span>.”</span> Corvallis, OR, 2013.</div>
+</div>
+<div id="ref-omernik_ecoregions_1987" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[2] </div><div class="csl-right-inline">J. M. Omernik, <span>“Ecoregions of the <span>Conterminous United States</span>,”</span> <em>Annals of the Association of American Geographers</em>, vol. 77, no. 1, pp. 118–125, Mar. 1987, doi: <a href="https://doi.org/10.1111/j.1467-8306.1987.tb00149.x">10.1111/j.1467-8306.1987.tb00149.x</a>.</div>
+</div>
+<div id="ref-roberts_crossvalidation_2017" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[3] </div><div class="csl-right-inline">D. R. Roberts <em>et al.</em>, <span>“Cross-validation strategies for data with temporal, spatial, hierarchical, or phylogenetic structure,”</span> <em>Ecography</em>, vol. 40, no. 8, pp. 913–929, Aug. 2017, doi: <a href="https://doi.org/10.1111/ecog.02881">10.1111/ecog.02881</a>.</div>
+</div>
+</div>
+
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">

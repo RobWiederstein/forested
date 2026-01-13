@@ -1,0 +1,54 @@
+library(tidyverse)
+library(tidymodels)
+
+# 1. CREATE DUMMY DATA
+set.seed(42)
+dat <- tibble(row_id = 1:50)
+
+# 2. ROBUST PLOTTING FUNCTION
+# This now works for ANY resampling type because it renames the ID column dynamically
+plot_resamples <- function(resamples, title) {
+  
+  # 1. Get the data
+  # 2. Rename the 3rd column (which is usually Fold, Resample, or id) to "Label"
+  #    so ggplot always finds it.
+  plot_data <- tidy(resamples) %>%
+    rename(Label = 3) 
+  
+  # 3. Plot
+  ggplot(plot_data, aes(x = Row, y = Label, fill = Data)) +
+    geom_tile() +
+    scale_fill_manual(
+      values = c("Analysis" = "gray90", "Assessment" = "darkred"),
+      labels = c("Analysis" = "Train", "Assessment" = "Test")
+    ) +
+    theme_minimal() +
+    labs(
+      title = title,
+      x = "Data Point (Row Index)",
+      y = "Fold / Iteration",
+      fill = "Set"
+    ) +
+    coord_cartesian(expand = FALSE)
+}
+
+# 3. GENERATE THE THREE TYPES
+
+# A. V-Fold Cross-Validation (Uses column "Fold")
+set.seed(123)
+folds_vfold <- vfold_cv(dat, v = 10)
+p1 <- plot_resamples(folds_vfold, "10-Fold Cross-Validation (The Diagonal)")
+
+# B. Bootstrapping (Uses column "Resample")
+set.seed(123)
+folds_boot <- bootstraps(dat, times = 10)
+p2 <- plot_resamples(folds_boot, "Bootstrapping (The Static)")
+
+# C. Rolling Origin (Uses column "Resample")
+folds_roll <- rolling_origin(dat, initial = 20, assess = 5, skip = 5, cumulative = FALSE)
+p3 <- plot_resamples(folds_roll, "Rolling Forecasting Origin (The Staircase)")
+
+# 4. DISPLAY THEM
+p1
+p2
+p3

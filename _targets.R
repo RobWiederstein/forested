@@ -5,9 +5,23 @@ library(tarchetypes)
 # --- 1. Options ---
 tar_option_set(
   packages = c(
-    "elevatr", "forested", "ggcorrplot", "ggrepel", "gt", "magrittr",
-    "tidyverse", "patchwork", "psych", "ranger", "rmapshaper",
-    "sf", "terra", "tidyterra", "tigris"
+    "colorspace",
+    "elevatr", 
+    "forested", 
+    "ggcorrplot", 
+    "ggrepel", 
+    "gt", 
+    "magrittr",
+    "patchwork", 
+    "psych", 
+    "ranger", 
+    "rmapshaper",
+    "sf",
+    "stringr",
+    "terra", 
+    "tidyterra", 
+    "tidyverse",
+    "tigris"
   ),
   format = "rds"
 )
@@ -85,6 +99,142 @@ plot_regional_comparison <- function(data, boundaries) {
   p_ga <- plot_state("GA")
   
   p_wa + p_ga + patchwork::plot_layout(guides = "collect") & ggplot2::theme(legend.position = 'bottom')
+}
+
+get_epa_ecoregions <- function(url, dest_dir = "data/epa") {
+  # Ensure directory exists
+  if (!dir.exists(dest_dir)) dir.create(dest_dir, recursive = TRUE)
+  
+  # Define destination
+  dest_file <- file.path(dest_dir, "us_eco_l3.zip")
+  
+  # Download only if missing
+  if (!file.exists(dest_file)) {
+    message("Downloading EPA Ecoregion Data...")
+    download.file(url, dest_file, mode = "wb")
+  }
+  
+  # Return the file path for the next target to track
+  return(dest_file)
+}
+
+process_ecoregions <- function(zip_path, target_states = c("Washington", "Georgia"), simplify_tol = 0.05) {
+  require(sf)
+  require(tidyverse)
+  require(tigris)
+  require(rmapshaper)
+  
+  message("Processing shapefiles for: ", paste(target_states, collapse = ", "))
+  
+  # A. Fetch State Boundaries (The "Cookie Cutter")
+  boundaries <- tigris::states(cb = TRUE, resolution = "20m", progress_bar = FALSE) %>%
+    filter(NAME %in% target_states) %>%
+    # Simplify boundaries to match the ecoregion resolution
+    rmapshaper::ms_simplify(keep = simplify_tol, keep_shapes = TRUE)
+  
+  # B. Unzip and Read EPA Data
+  clean_dir <- tempfile()
+  dir.create(clean_dir)
+  unzip(zip_path, exdir = clean_dir)
+  
+  shp_file <- list.files(clean_dir, pattern = "\\.shp$", full.names = TRUE, recursive = TRUE)[1]
+  eco_raw  <- sf::read_sf(shp_file)
+  
+  # C. Standardize Columns (Handle variations in column names)
+  if (!"US_L3NAME" %in% names(eco_raw)) {
+    if ("NA_L3NAME" %in% names(eco_raw)) {
+      eco_raw <- rename(eco_raw, US_L3NAME = NA_L3NAME)
+    } else if ("LEVEL3_NAM" %in% names(eco_raw)) {
+      eco_raw <- rename(eco_raw, US_L3NAME = LEVEL3_NAM)
+    }
+  }
+  
+  # D. Clip, Clean, and Simplify
+  suppressMessages(sf::sf_use_s2(FALSE)) # Turn off spherical geometry for robust clipping
+  
+  eco_clean <- eco_raw %>%
+    st_transform(st_crs(boundaries)) %>%
+    st_make_valid() %>%
+    st_intersection(boundaries) %>%
+    select(US_L3NAME, STATE_NAME = NAME) %>%
+    rmapshaper::ms_filter_islands(min_area = 200000000) %>% 
+    rmapshaper::ms_simplify(keep = simplify_tol, keep_shapes = TRUE)
+  
+  suppressMessages(sf::sf_use_s2(TRUE))
+  
+  return(eco_clean)
+}
+
+plot_ecoregion_comparison <- function(eco_data) {
+  require(ggplot2)
+  require(patchwork)
+  require(ggrepel)
+  require(sf)
+  
+  # Helper function for individual state plots
+  plot_state <- function(state_name, title_abbr) {
+    
+    # Filter data
+    state_e <- eco_data %>% 
+      filter(STATE_NAME == state_name) %>% 
+      st_transform(4326)
+    
+    # Calculate Label Centroids
+    state_labels <- state_e %>%
+      group_by(US_L3NAME) %>%
+      summarize(geometry = st_union(geometry)) %>% 
+      mutate(
+        lon = st_coordinates(st_point_on_surface(geometry))[, 1],
+        lat = st_coordinates(st_point_on_surface(geometry))[, 2],
+        clean_label = stringr::str_wrap(US_L3NAME, width = 15)
+      ) %>%
+      st_drop_geometry()
+    
+    # Plot
+    ggplot() +
+      # Geometries
+      geom_sf(data = state_e, aes(fill = US_L3NAME), 
+              alpha = 1, color = "white", lwd = 0.2) +
+      
+      # Labels (Optimized for placement)
+      geom_label_repel(
+        data = state_labels,
+        aes(x = lon, y = lat, label = clean_label),
+        inherit.aes = FALSE, 
+        size = 5,
+        lineheight = 0.9,
+        min.segment.length = 0,
+        box.padding = 0.8,
+        force = 25,
+        force_pull = 0.5,
+        max.overlaps = Inf,
+        alpha = 0.95,
+        segment.color = "grey30",
+        segment.size = 0.3,
+        seed = 42
+      ) +
+      
+      # Styling
+      #scale_fill_viridis_d(option = "turbo") +
+      scale_fill_discrete_qualitative(palette = "Dark 3") +
+      theme_light() +
+      labs(title = title_abbr, x = NULL, y = NULL) +
+      theme(
+        legend.position = "none",
+        plot.title = element_text(hjust = 0, face = "bold", size = 16),
+        axis.text = element_text(color = "grey60", size = 8),
+        panel.grid.major = element_line(color = "grey90", linewidth = 0.2)
+      )
+  }
+  
+  # Generate Subplots
+  p_wa <- plot_state("Washington", "WA")
+  p_ga <- plot_state("Georgia", "GA")
+  
+  # Combine with Patchwork
+  final_plot <- p_wa + p_ga
+  
+  return(final_plot)
 }
 
 compare_univariate_distribution <- function(data){
@@ -356,12 +506,34 @@ list(
   # Data Ingestion
   tar_target(forested_wa, forested::forested_wa),
   tar_target(forested_ga, forested::forested_ga),
-  
+  tar_target(
+    name = eco_url,
+    command = "https://dmap-prod-oms-edc.s3.us-east-1.amazonaws.com/ORD/Ecoregions/us/us_eco_l3.zip",
+    format = "url" 
+  ),
+  tar_target(
+    name = data_dir,
+    command = "data/epa",
+    format = "file" # Tracks the directory
+  ),
+  # Download data
+  tar_target(
+    name = eco_zip_file,
+    command = get_epa_ecoregions(url = eco_url, dest_dir = data_dir),
+    format = "file"
+  ),
   # Data Processing
   tar_target(forested_us, combine_forest(wa_data = forested_wa, ga_data = forested_ga)),
   tar_target(boundary_wa_sf, fetch_state_boundary(state = "Washington")),
   tar_target(boundary_ga_sf, fetch_state_boundary(state = "Georgia")),
-  
+  tar_target(
+    name = eco_data,
+    command = process_ecoregions(
+      zip_path = eco_zip_file, 
+      target_states = c("Washington", "Georgia"),
+      simplify_tol = 0.05
+    )
+  ),
   # Raster File Target
   tar_target(wa_elev_file, 
              create_elevation_raster(boundary_wa_sf, "data/wa_elevation.tif"), 
@@ -371,7 +543,20 @@ list(
   tar_target(map_us, draw_us_map(forested_us)),
   tar_target(wa_ga_map, fetch_study_area(c("Washington", "Georgia"))),
   tar_target(map_wa_ga, plot_regional_comparison(forested_us, wa_ga_map)),
-  
+  tar_target(
+    name = map_ecoregion_comparison,
+    command = plot_ecoregion_comparison(eco_data)
+  ),
+  tar_target(
+    name = save_plot,
+    command = ggsave("figs/ecoregion_comparison.png", 
+                     plot = map_ecoregion_comparison,
+                     width = 12, 
+                     height = 7, 
+                     dpi = 300
+                     ),
+    format = "file"
+  ),
   # Analysis
   tar_target(data_summary, create_stats_summary(forested_wa)),
   tar_target(tbl_wa_summary, style_audit_table(data_summary, title = "WA Summary")),
