@@ -26,7 +26,8 @@ tar_option_set(
     "tidyverse",
     "tigris",
     "xgboost",   # For XGBoost
-    "earth"    #
+    "earth",
+    "vip"
   ),
   format = "rds"
 )
@@ -627,6 +628,69 @@ plot_spatial_cv_comparison <- function(res_random, res_block, res_cluster) {
     )
 }
 
+plot_spatial_vip_comparison <- function(res_random, res_block, res_cluster) {
+  
+  # Internal helper to extract VIP from the best fold of the spatial_rf model
+  get_best_fold_vip <- function(wflow_obj, strategy_name) {
+    resample_results <- wflow_obj %>% extract_workflow_set_result("spatial_rf")
+    
+    best_fold_id <- resample_results %>%
+      collect_metrics(summarize = FALSE) %>%
+      filter(.metric == "roc_auc") %>%
+      slice_max(.estimate, n = 1) %>%
+      slice(1) %>% 
+      pull(id)
+    
+    best_split <- resample_results$splits[[which(resample_results$id == best_fold_id)]]
+    
+    wflow_obj %>%
+      extract_workflow("spatial_rf") %>%
+      finalize_workflow(select_best(resample_results, metric = "roc_auc")) %>%
+      fit(data = analysis(best_split)) %>% 
+      extract_fit_parsnip() %>%
+      vi() %>%
+      mutate(strategy = strategy_name)
+  }
+  
+  # Consolidate and clean
+  vip_data <- bind_rows(
+    get_best_fold_vip(res_random,  "Random CV"),
+    get_best_fold_vip(res_block,   "Block CV"),
+    get_best_fold_vip(res_cluster, "Cluster CV")
+  ) %>%
+    filter(Variable %in% c("lat", "lon", "lat_x_lon")) %>%
+    mutate(
+      Variable = case_when(
+        Variable == "lon" ~ "Long",
+        Variable == "lat" ~ "Lat",
+        Variable == "lat_x_lon" ~ "Lat/Lon",
+        TRUE ~ Variable
+      ),
+      Variable = factor(Variable, levels = c("Long", "Lat", "Lat/Lon")),
+      strategy = factor(strategy, levels = c("Cluster CV", "Block CV", "Random CV"))
+    )
+  
+  # Generate Plot
+  ggplot(vip_data, aes(x = Importance, y = strategy)) +
+    geom_segment(aes(x = 0, xend = Importance, y = strategy, yend = strategy), 
+                 color = "gray20", linewidth = .65) +
+    geom_point(aes(color = strategy), size = 5, show.legend = FALSE) +
+    facet_grid(Variable ~ ., scales = "free_y", space = "free_y", switch = "y") +
+    scale_color_discrete_qualitative(palette = "Dark 3") +
+    scale_x_continuous(limits = c(0, 105), expand = c(0, 0)) +
+    labs(
+      x = "Importance Score (Impurity)",
+      y = NULL
+    ) +
+    theme_classic(base_size = 14) +
+    theme(
+      #panel.grid.major.y = element_blank(),
+      panel.grid.minor = element_blank()
+      #panel.spacing = unit(2, "lines"),
+      #axis.text.y = element_text(color = "black"),
+      #strip.text.y.left = element_text(angle = 0, face = "bold", size = 12)
+    )
+}
 # --- 3. The Pipeline ---
 list(
   # constants 
@@ -701,8 +765,6 @@ list(
   tar_target(map_wa_outliers, 
              save_outlier_map_png(forested_wa, boundary_wa_sf, wa_elev_file, "figs/wa_outliers.png"),
              format = "file"),
-  
-  # PCA Target
   tar_target(plt_wa_pca, plot_wa_pca(forested_wa)),
   
   # correlogram
@@ -858,6 +920,10 @@ list(
   tar_target(
     fig_cv_comparison,
     plot_spatial_cv_comparison(results_random, results_block, results_cluster)
+  ),
+  tar_target(
+    fig_spatial_vip,
+    plot_spatial_vip_comparison(results_random, results_block, results_cluster)
   ),
   # Report
   tar_quarto(report, "index.qmd", quiet = FALSE)

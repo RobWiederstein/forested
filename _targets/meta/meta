@@ -65,9 +65,10 @@ plot_correlations|function|43907d01dbc25e12
 identify_outliers|function|7525c8052a54d542
 plot_ecoregion_comparison|function|23305446616e4e8d
 combine_forest|function|d707f456a058f32f
-.Random.seed|object|b8bdaa5eccd5b7dd
+.Random.seed|object|903fb6aa2881eba1
 plot_cv_strategies|function|acac067da2cfb7ab
 plot_spatial_cv_comparison|function|c7bdcf5a838705a9
+plot_spatial_vip_comparison|function|494982012e043008
 style_audit_table|function|df7394dd76b3f20b
 plot_regional_comparison|function|8abbfc2cff115692
 plot_wa_pca|function|11e48cc6dfd51624
@@ -79,4 +80,5 @@ fetch_study_area|function|f3f83066daf7fb26
 get_epa_ecoregions|function|76add3e9b8752264
 fetch_state_boundary|function|336301eea35df9d3
 plot_rf_importance|function|26ee16546862388c
-report|stem|751cb2f6aed87215|8063eb2e4d4c6e81|e41647df4337db3c|787668912|index_files*index.html*index.qmd|t20468.0298747404s|s20538934b|20538934|file|local|vector|||20.419||
+fig_spatial_vip|stem|8d11ad753e22bcd2|ddc1a6688fe30184|d7976c359eec7fe6|-1439230298||t20468.0622286254s|s204257554b|204257554|rds|local|vector|||7.569||
+report|stem|9ede15ca4199b544|98dc716af0c0b1fd|aa0d009500df780d|787668912|index_files*index.html*index.qmd|t20468.062676769s|s20615339b|20615339|file|local|vector|||26.718||

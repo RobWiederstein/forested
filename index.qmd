@@ -438,7 +438,6 @@ tar_read(plot_cv_comparison)
 #| echo: false
 #| message: false
 
-library(targets)
 tar_read(fig_cv_comparison)
 ```
 
@@ -450,6 +449,26 @@ tar_read(fig_cv_comparison)
 - **Feature Leakage:** Compare the "With Coords" vs. "No Coords" rows. If the "With Coords" model crashes in performance during Block CV but holds steady in Random CV, it is a clear sign of overfitting to spatial coordinates (Lat/Lon) rather than the underlying forest ecology.
 
 - **Performance Benchmark:** The dashed line at 0.96 represents an established, high-performance baseline for forest classification. It serves as a "line in the sand" to determine if our machine learning approach provides a meaningful improvement over traditional methods; a model is only truly successful if it can exceed this 0.96 threshold under the pressure of spatial cross-validation.
+:::
+
+
+## VIP Comparison
+
+```{r}
+#| label: fig-vip-comparison
+#| fig-cap: "Variable Importance (VIP) for spatial coordinates across CV strategies."
+#| echo: false
+#| message: false
+
+tar_read(fig_spatial_vip)
+```
+
+::: {.notes}
+- **Perspective on Scale:** While coordinates show significant importance here, keep in mind this is a filtered view. In the full model, environmental variables like **canopy cover** achieve importance scores 3 to 4 times higher (often in the 300–400 range), indicating the model is primarily driven by physical forest structure.
+- **The "Crutch" Effect:** In Random CV (blue dots), Latitude and Longitude show high relative importance. The model uses these as a "crutch" to memorize the specific locations of forest plots rather than learning environmental drivers.
+- **Geographic Decay:** As we move to Block and Cluster CV, the model is forced to find signal in environmental variables because specific coordinates are no longer reliable predictors for distant geographic partitions.
+- **Persistent Importance:** The lack of a dramatic "crash" in coordinate importance during Cluster CV suggests the model is identifying broad regional gradients (a "map") that remain predictive across different clusters, rather than just memorizing local points (a "cheat sheet").
+- **Structural Bias:** Note that these are impurity-based scores. The Random Forest algorithm favors continuous variables like Lat/Lon because they offer many unique split points, which can inflate their importance relative to categorical environmental data.
 :::
 
 
