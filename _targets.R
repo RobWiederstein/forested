@@ -14,6 +14,7 @@ tar_option_set(
     "magrittr",
     "patchwork", 
     "psych", 
+    "quarto",
     "ranger", 
     "rmapshaper",
     "sf",
@@ -23,7 +24,9 @@ tar_option_set(
     "tidyterra",
     "tidymodels",
     "tidyverse",
-    "tigris"
+    "tigris",
+    "xgboost",   # For XGBoost
+    "earth"    #
   ),
   format = "rds"
 )
@@ -454,7 +457,6 @@ plot_rf_importance <- function(data) {
     ggplot2::scale_shape_manual(values = c("Biophysical" = 16, "Spatial" = 17)) +
     # Colors: Forest Green for legit vars, Dark Gray for spatial leakage (optional contrast)
     ggplot2::scale_color_manual(values = c("Biophysical" = "#228B22", "Spatial" = "black")) +
-    # ----------------------
   
   ggplot2::theme_minimal(base_size = 16) +
     ggplot2::labs(
@@ -584,11 +586,59 @@ plot_cv_strategies <- function(data) {
   p1 + p2 + p3 + plot_layout(ncol = 3)
 }
 
+plot_spatial_cv_comparison <- function(res_random, res_block, res_cluster) {
+  # 1. Extract & Clean Data
+  all_metrics <- bind_rows(
+    res_random  %>% collect_metrics() %>% mutate(strategy = "Random CV"),
+    res_block   %>% collect_metrics() %>% mutate(strategy = "Block CV"),
+    res_cluster %>% collect_metrics() %>% mutate(strategy = "Cluster CV")
+  ) %>%
+    filter(.metric == "roc_auc") %>%
+    separate(wflow_id, into = c("recipe", "model"), sep = "_") %>%
+    mutate(
+      recipe_label = case_when(
+        recipe == "base" ~ "No Coords",
+        recipe == "spatial" ~ "With Coords"
+      ),
+      strategy = factor(strategy, levels = c("Random CV", "Block CV", "Cluster CV"))
+    )
+  
+  # 2. Generate Plot
+  ggplot(all_metrics, aes(x = model, y = mean, color = model)) +
+    geom_hline(yintercept = 0.96, linetype = "dashed", color = "gray50", alpha = 0.5) +
+    geom_point(size = 4) +
+    geom_errorbar(aes(ymin = mean - std_err, ymax = mean + std_err), width = 0.2) +
+    scale_color_discrete_qualitative(palette = "Dark 3") +
+    facet_grid(recipe_label ~ strategy) +
+    scale_y_continuous(labels = scales::number_format(accuracy = 0.01),
+                       limits = c(.65, 1)) +
+    labs(
+      #title = "Model Performance: The Effect of Spatial Validation",
+      #subtitle = "Comparing ROC AUC across Models, Recipes, and Validation Strategies",
+      y = "ROC AUC Score",
+      x = "Model Type",
+      color = "Model"
+    ) +
+    theme_bw(base_size = 14) +
+    theme(
+      legend.position = "none",
+      panel.grid.minor = element_blank(),
+      strip.text = element_text(face = "bold", size = 12)
+    )
+}
+
 # --- 3. The Pipeline ---
 list(
+  # constants 
+  tar_target(n_folds, 10),
   # Data Ingestion
   tar_target(forested_wa, forested::forested_wa),
   tar_target(forested_ga, forested::forested_ga),
+  tar_target(
+    wa_sf,
+    forested_wa %>% 
+      sf::st_as_sf(coords = c("lon", "lat"), crs = 4326, remove = FALSE)
+  ),
   tar_target(
     name = eco_url,
     command = "https://dmap-prod-oms-edc.s3.us-east-1.amazonaws.com/ORD/Ecoregions/us/us_eco_l3.zip",
@@ -663,6 +713,152 @@ list(
   # umap plot
   tar_target(umap_plot, plot_umap_forested(forested_wa)),
   
+  # 1. Data Splitting -------------------------------------------------
+  
+  # Define the split (80% Train, 20% Test)
+  tar_target(splits, initial_split(wa_sf, prop = 0.80, strata = forested)),
+  
+  # Extract the Training Set (Used for Resampling/Modeling)
+  tar_target(train_data, training(splits)),
+  
+  # Extract the Test Set (Locked away until the very end)
+  tar_target(test_data, testing(splits)),
+  # 2. Recipes --------------------------------------------------------
+  
+  ## Recipe A: The "Base"
+  tar_target(
+    recipe_base,
+    recipe(forested ~ ., data = train_data) %>% 
+      update_role(geometry, lat, lon, new_role = "id") %>% 
+      step_zv(all_predictors()) %>% 
+      step_normalize(all_numeric_predictors()) %>% 
+      step_dummy(all_nominal_predictors())
+  ),
+  
+  # Recipe B: Spatial
+  tar_target(
+    recipe_spatial,
+    recipe(forested ~ ., data = train_data) %>% 
+      update_role(geometry, new_role = "id") %>% 
+      step_zv(all_predictors()) %>% 
+      step_normalize(all_numeric_predictors()) %>% 
+      step_dummy(all_nominal_predictors()) %>% 
+      step_interact(terms = ~ lat:lon)
+  ),
+  # --- 3. Engines (Models) -----------------------------------------------
+  # CRITICAL: All set to single-threaded to allow parallel folding.
+  
+  # 1. Logistic Regression (The Baseline)
+  tar_target(
+    spec_logistic,
+    logistic_reg() %>% 
+      set_engine("glm") %>% 
+      set_mode("classification")
+  ),
+  
+  # 2. MARS (Multivariate Adaptive Regression Splines)
+  # A smooth, fast alternative that handles interactions automatically.
+  tar_target(
+    spec_mars,
+    mars(num_terms = 10, prod_degree = 2) %>% 
+      set_engine("earth", nfold = 1) %>%  # nfold=1 prevents internal CV (speed)
+      set_mode("classification")
+  ),
+  
+  # 3. Random Forest (The Standard)
+  # using 'ranger' which is faster than the default 'randomForest'
+  tar_target(
+    spec_rf,
+    rand_forest(trees = 1000, min_n = 10) %>% 
+      set_engine("ranger", 
+                 importance = "impurity", # Calculate variable importance
+                 num.threads = 1) %>%     # <--- Server Safety Lock
+      set_mode("classification")
+  ),
+  
+  # 4. XGBoost (The Powerhouse)
+  tar_target(
+    spec_xgb,
+    boost_tree(trees = 1000, tree_depth = 6, learn_rate = 0.01) %>% 
+      set_engine("xgboost", 
+                 nthread = 1) %>%         # <--- Server Safety Lock
+      set_mode("classification")
+  ),
+  # --- 4. The Workflow Set -----------------------------------------------
+  # Crosses every recipe with every model (2 x 4 = 8 workflows)
+  tar_target(
+    model_set,
+    workflow_set(
+      preproc = list(base = recipe_base, spatial = recipe_spatial),
+      models = list(
+        log = spec_logistic, 
+        rf = spec_rf, 
+        xgb = spec_xgb, 
+        mars = spec_mars
+      ),
+      cross = TRUE
+    )
+  ),
+  # --- 5. Resampling Strategies ------------------------------------------
+  
+  # A. Random Folds
+  tar_target(
+    folds_random,
+    vfold_cv(train_data, v = n_folds, strata = forested)
+  ),
+  
+  # B. Spatial Blocks
+  tar_target(
+    folds_block,
+    spatial_block_cv(train_data, v = n_folds) 
+  ),
+  
+  # C. Spatial Clustering
+  tar_target(
+    folds_cluster,
+    spatial_clustering_cv(train_data, v = n_folds) 
+  ),
+  # --- 6. The Execution (Fit Models) -------------------------------------
+  
+  # Branch 1: Random CV
+  tar_target(
+    results_random,
+    workflow_map(
+      model_set, 
+      "fit_resamples", 
+      resamples = folds_random,
+      metrics = metric_set(roc_auc, accuracy, pr_auc),
+      verbose = TRUE
+    )
+  ),
+  
+  # Branch 2: Block CV
+  tar_target(
+    results_block,
+    workflow_map(
+      model_set, 
+      "fit_resamples", 
+      resamples = folds_block,
+      metrics = metric_set(roc_auc, accuracy, pr_auc),
+      verbose = TRUE
+    )
+  ),
+  
+  # Branch 3: Cluster CV
+  tar_target(
+    results_cluster,
+    workflow_map(
+      model_set, 
+      "fit_resamples", 
+      resamples = folds_cluster,
+      metrics = metric_set(roc_auc, accuracy, pr_auc),
+      verbose = TRUE
+    )
+  ),
+  tar_target(
+    fig_cv_comparison,
+    plot_spatial_cv_comparison(results_random, results_block, results_cluster)
+  ),
   # Report
   tar_quarto(report, "index.qmd", quiet = FALSE)
 )

@@ -1,6 +1,7 @@
-.Rproj.user/
-.Rhistory
-.RData
-renv/library/
-renv/python/
-renv/staging/
+.git
+.gitignore
+.Rproj.user
+_targets/
+_site/
+*.html
+*.DS_Store

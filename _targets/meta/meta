@@ -39,6 +39,25 @@ plot_comparison|stem|65040364ac1da344|f5da256040b0baea|46647d2df089844a|-1523103
 map_ecoregion_comparison|stem|c4053130508dfb56|f5da256040b0baea|cdd1df7afd81e49f|-2123837280||t20466.4974190666s|s1558176b|1558176|rds|local|vector|||0.296|There were 2 warnings in `stopifnot()`. The first warning was: ℹ In argument: `lon = st_coordinates(st_point_on_surface(geometry))[, 1]`. Caused by warning in `st_point_on_surface.sfc()`: ! st_point_on_surface may not give correct results for longitude/latitude data ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning.. There were 2 warnings in `stopifnot()`. The first warning was: ℹ In argument: `lon = st_coordinates(st_point_on_surface(geometry))[, 1]`. Caused by warning in `st_point_on_surface.sfc()`: ! st_point_on_surface may not give correct results for longitude/latitude data ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning.|
 save_plot|stem|cc733d65e707e6cb|079f826d8670d4ea|e3f12f925897046f|-1898771178|figs/ecoregion_comparison.png|t20466.4975689144s|s542381b|542381|file|local|vector|||0.55||
 plot_cv_comparison|stem|83491507d6a61860|cfc93bd40b2d2024|efe5d8d4e4714272|640033771||t20466.8428955518s|s13744741b|13744741|rds|local|vector|||2.405||
+spec_mars|stem|4df34c6f35527c90|813c0156fa34b418|2c530c1562a7fbd1|1500571923||t20467.4462273909s|s326b|326|rds|local|vector|||3.227||
+spec_logistic|stem|2fb298a259e7ec92|0591c95b860ed296|2c530c1562a7fbd1|-1244573532||t20467.4462276339s|s289b|289|rds|local|vector|||0.001||
+spec_rf|stem|80068781d7c6343c|98386f35ba3e7250|2c530c1562a7fbd1|1284681008||t20467.446230377s|s350b|350|rds|local|vector|||0.001||
+spec_xgb|stem|717d55837394c4e9|95d33eb909bde17a|2c530c1562a7fbd1|-2050119352||t20467.446230458s|s397b|397|rds|local|vector|||0.001||
+wa_sf|stem|39f3479568c844ba|a54f8a5bba3d64f6|eb0954bdf1eefb6a|-2116683015||t20467.457178721s|s403609b|403609|rds|local|vector|||0.003||
+splits|stem|70ef84d587249c95|6bfaf49af8529150|25a0b078816eb3a5|-1848090122||t20467.4571796816s|s418973b|418973|rds|local|vector|||0.008||
+train_data|stem|f75774442a623603|b70b0a8a5e3d2c18|f0bed4e1bda37579|1410565984||t20467.4571803992s|s321557b|321557|rds|local|vector|||0.003||
+test_data|stem|7231dbc566431db5|36950b097efad8bb|f0bed4e1bda37579|771182612||t20467.4571806654s|s88242b|88242|rds|local|vector|||0.001||
+recipe_base|stem|9ff488090368c195|fedf48c17cefeb98|8b5911dcf189ad46|-1590154186||t20467.45718695s|s1617197b|1617197|rds|local|vector|||0.012||
+recipe_spatial|stem|3b2395f3d7443c7d|ce881c9308136e4f|8b5911dcf189ad46|-722200210||t20467.4582810345s|s1941108b|1941108|rds|local|vector|||0.015||
+model_set|stem|c94b1ecd82142ce8|66ffddca79c96f04|fabd455289eca503|-1696100659||t20467.4585304644s|s5508833b|5508833|rds|local|vector|||0.018||
+n_folds|stem|1a0f65ad50d470ef|283bbb5a254c0461|2c530c1562a7fbd1|724011503||t20467.4616946521s|s50b|50|rds|local|vector|||3.474||
+folds_block|stem|107c092dfcdf1455|72a8b2b2a0dbcddd|7f7c2eaf8841ebf5|-734361840||t20467.4618496619s|s3355421b|3355421|rds|local|vector|||0.718||
+folds_cluster|stem|4f78c950cbe2cc7a|59efdd1d89019d3f|7f7c2eaf8841ebf5|441062540||t20467.4622005027s|s7041481b|7041481|rds|local|vector|||29.602||
+folds_random|stem|569266496af15a34|3f087eb9e7d69846|7f7c2eaf8841ebf5|-1644848936||t20467.462204623s|s3355207b|3355207|rds|local|vector|||0.008||
+results_cluster|stem|9c0cb6f24a90d24f|f65d1ff0868a2345|0123eea831bc4733|-906050631||t20467.4713629284s|s85241935b|85241935|rds|local|vector|||92.171||
+results_block|stem|e31b60fc58a63994|d722d4d046635caf|a00cf9962892ada4|-1992481963||t20467.4724927414s|s59306505b|59306505|rds|local|vector|||91.716||
+results_random|stem|7479f1aee71bbaab|faad3c5336ac2cb2|0b539446d6558f32|-962919896||t20467.4736086195s|s59291424b|59291424|rds|local|vector|||90.695||
+fig_cv_comparison|stem|f8b16e83c1f7d0ef|ef746d284f476b2a|23a79bcf382c2064|-258705259||t20468.0224000201s|s204265314b|204265314|rds|local|vector|||0.872||
 create_elevation_raster|function|e7d31314aac3a488
 save_outlier_map_png|function|99cfc3aa6549d766
 compare_univariate_distribution|function|1df38f6bada1c2a4
@@ -46,8 +65,9 @@ plot_correlations|function|43907d01dbc25e12
 identify_outliers|function|7525c8052a54d542
 plot_ecoregion_comparison|function|23305446616e4e8d
 combine_forest|function|d707f456a058f32f
-.Random.seed|object|252b36da5dd1d8f0
+.Random.seed|object|b8bdaa5eccd5b7dd
 plot_cv_strategies|function|acac067da2cfb7ab
+plot_spatial_cv_comparison|function|c7bdcf5a838705a9
 style_audit_table|function|df7394dd76b3f20b
 plot_regional_comparison|function|8abbfc2cff115692
 plot_wa_pca|function|11e48cc6dfd51624
@@ -59,4 +79,4 @@ fetch_study_area|function|f3f83066daf7fb26
 get_epa_ecoregions|function|76add3e9b8752264
 fetch_state_boundary|function|336301eea35df9d3
 plot_rf_importance|function|26ee16546862388c
-report|stem|7b4d6374dffe9300|a2b94aa1c7a10421|6a32abe9366122da|787668912|index_files*index.html*index.qmd|t20466.8561445473s|s17724066b|17724066|file|local|vector|||12.4||
+report|stem|751cb2f6aed87215|8063eb2e4d4c6e81|e41647df4337db3c|787668912|index_files*index.html*index.qmd|t20468.0298747404s|s20538934b|20538934|file|local|vector|||20.419||

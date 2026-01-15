@@ -20,6 +20,7 @@ nocite: |
 ```{r}
 #| label: setup
 #| include: false
+library(here)
 library(targets)
 library(gt)
 ```
@@ -54,8 +55,9 @@ library(gt)
 
 ::: {.notes}
 **Speaker Notes:**
-* The `forested` package is our primary data source, containing the raw measurements for both the Washington and Georgia "islands".
-* We are auditing this package's features to see how well they predict the 'forested' outcome in two geographically distant locations.
+- The `forested` package is our primary data source, containing the raw measurements for both the Washington and Georgia "islands".
+
+- We are auditing this package's features to see how well they predict the 'forested' outcome in two geographically distant locations.
 
 :::
 
@@ -341,6 +343,33 @@ tar_read(umap_plot)
 
 # Resampling
 
+## The Mechanics of Resampling
+
+```{r}
+#| label: fig-resampling
+#| echo: false
+#| fig-cap: "Visualizing the resampling process [@kuhn_tidy_2022]"
+#| fig-align: "center"
+#| out-width: "75%"
+#| out-extra: 'style="width:75%;"'
+
+knitr::include_graphics(here::here("images", "resampling.svg"))
+```
+
+:::{.notes}
+- **The Concept:** Resampling methods (like cross-validation and bootstrapping) are **empirical simulation systems**. They generate different versions of our training set to simulate how the model handles new data.
+
+- **The Golden Rule:** It is critical to remember: Resampling is *always* used with the **Training set**. The **Test set** is not involved.
+
+- **The Vocabulary:** To avoid confusion with our initial Train/Test split, we use specific language for these internal loops:
+    - **Analysis Set:** The subset used to **fit** the model.
+    - **Assessment Set:** The subset used to **evaluate** performance.
+
+- **The Mechanism:** In every iteration, these two sets are **mutually exclusive**. We fit on the Analysis set, and we measure performance on the Assessment set.
+
+- **The Why:** As we discussed, simply re-predicting the training set is problematic (it leads to optimism bias). Resampling allows us to get a realistic appraisal using the training set without ever touching the final test data.
+:::
+
 ## Spatial Autocorrelation
 
 >"When data are not independent (e.g. due to spatial autocorrelation), random cross-validation yields optimistic estimates of predictive performance because training and test sets are not independent."[@roberts_crossvalidation_2017]
@@ -396,6 +425,31 @@ tar_read(plot_cv_comparison)
 - This strategy tests for **ecological generalization**.
 - Notice the large red area in the southeast—the algorithm identified the **Columbia Plateau** as a distinct environment.
 - By holding out entire environments (e.g., training on "Wet Coastal" to predict "Dry Plateau"), we test if the model captures the fundamental biological relationships (e.g., how temp/rain affect trees) rather than just memorizing geographic trends.
+:::
+
+# Results
+
+## Spatial Validation Analysis
+
+
+```{r}
+#| label: fig-spatial-results
+#| fig-cap: "Comparison of Model Performance (ROC AUC) across three spatial validation strategies. Benchmark (0.96 ROC AUC) indicated by the horizontal dashed line."
+#| echo: false
+#| message: false
+
+library(targets)
+tar_read(fig_cv_comparison)
+```
+
+::: {.notes}
+- **Optimism Bias:** Notice the "Random CV" column. It shows nearly perfect performance (>0.95 ROC AUC). This is often a "spatial mirage" where the model is simply memorizing locations (autocorrelation) rather than learning environmental drivers.
+
+- **Spatial Honesty:** The "Block" and "Cluster" columns provide a more realistic estimate of how the model will perform on new, geographically distant areas. This represents the "true" performance we should expect for out-of-sample prediction.
+
+- **Feature Leakage:** Compare the "With Coords" vs. "No Coords" rows. If the "With Coords" model crashes in performance during Block CV but holds steady in Random CV, it is a clear sign of overfitting to spatial coordinates (Lat/Lon) rather than the underlying forest ecology.
+
+- **Performance Benchmark:** The dashed line at 0.96 represents an established, high-performance baseline for forest classification. It serves as a "line in the sand" to determine if our machine learning approach provides a meaningful improvement over traditional methods; a model is only truly successful if it can exceed this 0.96 threshold under the pressure of spatial cross-validation.
 :::
 
 
