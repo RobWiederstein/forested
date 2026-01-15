@@ -471,6 +471,28 @@ tar_read(fig_spatial_vip)
 - **Structural Bias:** Note that these are impurity-based scores. The Random Forest algorithm favors continuous variables like Lat/Lon because they offer many unique split points, which can inflate their importance relative to categorical environmental data.
 :::
 
+## Performance Stability
+
+
+```{r}
+#| label: fig-stability
+#| fig-cap: "Distribution of ROC AUC scores across individual cross-validation folds. Note the variance in scores by resampling method."
+#| echo: false
+#| message: false
+
+tar_read(fig_model_stability)
+```
+
+::: {.notes}
+- **Falsely Confident:** In **Random CV**, notice how tightly clustered the points are at the top; the model's performance is artificially stable because every fold contains a representative "sprinkling" of the entire dataset.
+- **The Reality of Variance:** As we transition to **Cluster CV**, the "violin" stretches out, indicating that the model performs significantly better in some geographic regions than others.
+- **Identifying Weak Spots:** Each point in the Cluster CV column represents a specific geographic area; the points near the bottom of the violin represent "hard-to-predict" regions where the model's current features might be insufficient.
+- **Predictive Risk:** While Random CV suggests the model is ~98% accurate everywhere, this plot proves that in some clusters, performance may actually dip toward 85%.
+- **Stakeholder Transparency:** This variance is a critical insight for stakeholders, as it defines the geographic boundaries of where the model's predictions can be most (and least) trusted.
+:::
+
+
+
 
 ## References
 

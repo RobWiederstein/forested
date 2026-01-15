@@ -629,6 +629,7 @@ plot_spatial_cv_comparison <- function(res_random, res_block, res_cluster) {
 }
 
 plot_spatial_vip_comparison <- function(res_random, res_block, res_cluster) {
+
   
   # Internal helper to extract VIP from the best fold of the spatial_rf model
   get_best_fold_vip <- function(wflow_obj, strategy_name) {
@@ -689,6 +690,44 @@ plot_spatial_vip_comparison <- function(res_random, res_block, res_cluster) {
       #panel.spacing = unit(2, "lines"),
       #axis.text.y = element_text(color = "black"),
       #strip.text.y.left = element_text(angle = 0, face = "bold", size = 12)
+    )
+}
+
+plot_model_stability <- function(res_random, res_block, res_cluster) {
+  
+  # Internal helper to extract per-fold metrics
+  extract_fold_metrics <- function(wflow_obj, strategy_name) {
+    wflow_obj %>%
+      extract_workflow_set_result("spatial_rf") %>%
+      collect_metrics(summarize = FALSE) %>% 
+      filter(.metric == "roc_auc") %>%
+      mutate(strategy = strategy_name)
+  }
+  
+  # Combine and factorize
+  all_fold_metrics <- bind_rows(
+    extract_fold_metrics(res_random,  "Random CV"),
+    extract_fold_metrics(res_block,   "Block CV"),
+    extract_fold_metrics(res_cluster, "Cluster CV")
+  ) %>%
+    mutate(strategy = factor(strategy, levels = c("Random CV", "Block CV", "Cluster CV")))
+  
+  # Generate Plot
+  ggplot(all_fold_metrics, aes(x = strategy, y = .estimate, color = strategy)) +
+    geom_violin(alpha = 0.4, outlier.shape = NA, width = 0.5) +
+    geom_jitter(width = 0.1, size = 3, alpha = 0.8) +
+    scale_fill_discrete_qualitative(palette = "Dark 3") +
+    scale_color_discrete_qualitative(palette = "Dark 3") +
+    scale_y_continuous(limits = c(0.80, 1.0), breaks = seq(0.80, 1.0, 0.05)) +
+    labs(
+      x = NULL,
+      y = "ROC AUC (per fold)",
+      caption = ""
+    ) +
+    theme_classic(base_size = 14) +
+    theme(
+      legend.position = "none",
+      axis.text.x = element_text(face = "bold")
     )
 }
 # --- 3. The Pipeline ---
@@ -924,6 +963,10 @@ list(
   tar_target(
     fig_spatial_vip,
     plot_spatial_vip_comparison(results_random, results_block, results_cluster)
+  ),
+  tar_target(
+    fig_model_stability,
+    plot_model_stability(results_random, results_block, results_cluster)
   ),
   # Report
   tar_quarto(report, "index.qmd", quiet = FALSE)
