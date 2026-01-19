@@ -45,7 +45,6 @@ wa_ga_map|stem|e997296393a5e27d|cee481a2d732aed2|38f4008616982a64|-537964005||t2
 boundary_wa_sf|stem|43cb3dc538db4700|c9ca80ee0160f2d4|5ab25d454cc0ff91|-327773459||t20468.4188141074s|s1573b|1573|rds|local|vector|||3.985||
 boundary_ga_sf|stem|12cc875cea5d922a|c6ed783e26dfc09c|5ab25d454cc0ff91|189948494||t20468.4188173944s|s1617b|1617|rds|local|vector|||0.05||
 wa_elev_file|stem|0ec3149ab9b4d526|8ccf5b053f33d2b5|a877424d4f52a500|1944262089|data/wa_elevation.tif|t20468.4188721623s|s2196414b|2196414|file|local|vector|||4.721||
-map_wa_outliers|stem|827881f2c056e7a1|2f01fcaa6977bdc3|1be3bd6b3b64abaa|-1030335457|figs/wa_outliers.png|t20468.4189136317s|s862053b|862053|file|local|vector|||3.542|Using one column matrices in `filter()` was deprecated in dplyr 1.1.0. ℹ Please use one dimensional logical vectors instead.. st_point_on_surface may not give correct results for longitude/latitude data|
 fig_fold_mechanics|stem|1151d9c7772a38a6|494ede46920dd5fc|2be1b6b086cf2d0f|1290943718||t20468.8765539004s|s15762868b|15762868|rds|local|vector|||2.366||
 map_us|stem|771f6e2068ce6764|984521b37d2ea981|0eaa4578cc5392fe|479175181||t20468.9383382783s|s5659700b|5659700|rds|local|vector|||0.79|None of your features are in Alaska, Hawaii, or Puerto Rico, so no geometries will be shifted. Transforming your object's CRS to 'ESRI:102003'. None of your features are in Alaska, Hawaii, or Puerto Rico, so no geometries will be shifted. Transforming your object's CRS to 'ESRI:102003'. The `size` argument of `element_line()` is deprecated as of ggplot2 3.4.0. ℹ Please use the `linewidth` argument instead.|
 draw_study_sites_map|function|983da5923f00345b
@@ -74,14 +73,15 @@ fig_cv_comparison|stem|173c6d45e4859fbb|ef746d284f476b2a|1003f723f7f2107b|-25870
 tbl_performance|stem|173e515a235654d2|48d51d2385b59fcb|1e583424ef726a38|-1551511671||t20472.0679533132s|s118007447b|118007447|rds|local|vector|||0.268||
 plt_vip|stem|eb636d81a2f2dd47|b1335ae312db100e|c52b4039ec2aa5f4|-623821603||t20472.7575971824s|s3181098b|3181098|rds|local|vector|||1.773||
 plot_yeo|stem|a92026770af3585d|f21cc60d6038c7e4|f42833516273f7d8|2098853526||t20472.823681997s|s1329446b|1329446|rds|local|vector|||0.12||
+report|stem|6e45b2e70cc6c91a|8690dbe87c8c916a|9b00011ae35a24a3|787668912|index_files*index.html*index.qmd|t20472.830332324s|s23889994b|23889994|file|local|vector|||36.58||
 plot_regional_comparison|function|a7308122330f93ae
-.Random.seed|object|37e36b4b558c84fd
+.Random.seed|object|9197738386cfc6d6
 create_performance_table|function|16b867dde5ffaf4c
 plot_yeo_johnson|function|a70d902df1b22d84
 plot_final_confusion_matrix|function|416ee809c03b13ce
 plot_fold_mechanics|function|ba7d9ea41f4512cd
 identify_outliers|function|7525c8052a54d542
-save_outlier_map_png|function|99cfc3aa6549d766
+save_outlier_map_png|function|266980e66a127ee2
 draw_us_map|function|983da5923f00345b
 compare_univariate_distribution|function|1df38f6bada1c2a4
 create_elevation_raster|function|e7d31314aac3a488
@@ -103,4 +103,4 @@ plot_final_test_results|function|77da897ab310272a
 combine_forest|function|d707f456a058f32f
 plot_wa_pca|function|11e48cc6dfd51624
 fetch_state_boundary|function|4b4b35294bd5418f
-report|stem|6e45b2e70cc6c91a|8690dbe87c8c916a|9b00011ae35a24a3|787668912|index_files*index.html*index.qmd|t20472.830332324s|s23889994b|23889994|file|local|vector|||36.58||
+map_wa_outliers|stem|85c66b937e723a86|2f01fcaa6977bdc3|aacc5e44e7ef18c9|-1030335457|figs/wa_outliers.png|t20472.8526305762s|s1116056b|1116056|file|local|vector|||5.85|Using one column matrices in `filter()` was deprecated in dplyr 1.1.0. ℹ Please use one dimensional logical vectors instead.. st_point_on_surface may not give correct results for longitude/latitude data|

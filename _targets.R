@@ -323,20 +323,34 @@ create_elevation_raster <- function(boundary_sf, path) {
   terra::writeRaster(elev_terra, path, overwrite = TRUE)
   return(path)
 }
+# R/functions.R
 
 save_outlier_map_png <- function(data, boundary_sf, raster_path, output_path) {
+  # 1. Load & Process Raster
   elev_terra <- terra::rast(raster_path)
+  
+  # Calculate Slope & Aspect
+  slope  <- terra::terrain(elev_terra, "slope", unit = "radians")
+  aspect <- terra::terrain(elev_terra, "aspect", unit = "radians")
+  
+  # Generate Hillshade
+  hill_terra <- terra::shade(slope, aspect, angle = 45, direction = 315)
+  
+  # 2. Prep Vectors
   wa_boundary_sf <- sf::st_transform(boundary_sf, 4326)
   
   data_sf <- data %>%
     sf::st_as_sf(coords = c("lon", "lat"), crs = 4326) %>%
     sf::st_filter(wa_boundary_sf)
   
-  numeric_cols <- data_sf %>% sf::st_drop_geometry() %>% dplyr::select(where(is.numeric)) %>% names()
-  outliers_sf <- data_sf %>%
-    dplyr::filter(dplyr::if_any(all_of(numeric_cols), ~ abs(scale(.)) > 3))
+  numeric_cols <- data_sf %>% 
+    sf::st_drop_geometry() %>% 
+    dplyr::select(where(is.numeric)) %>% 
+    names()
   
-  # 4. Restore the Peaks Data (CRITICAL MISSING PIECE)
+  outliers_sf <- data_sf %>%
+    dplyr::filter(dplyr::if_any(dplyr::all_of(numeric_cols), ~ abs(scale(.)) > 3))
+  
   wa_peaks_sf <- tibble::tibble(
     peak = c("Mt. Rainier", "Mt. Adams", "Mt. Baker", "Glacier Peak", "Mt. St. Helens", "Mt. Olympus"),
     lat  = c(46.8523, 46.2024, 48.7767, 48.1125, 46.1914, 47.8013),
@@ -344,13 +358,27 @@ save_outlier_map_png <- function(data, boundary_sf, raster_path, output_path) {
   ) %>%
     sf::st_as_sf(coords = c("lon", "lat"), crs = 4326)
   
+  # 3. Plot
   plt <- ggplot2::ggplot() +
+    # Layer A: Elevation Color
     tidyterra::geom_spatraster(data = elev_terra) + 
-    tidyterra::scale_fill_hypso_c(palette = "usgs-gswa2") +
-    ggplot2::geom_sf(data = wa_boundary_sf, fill = NA) +
-    ggplot2::geom_sf(data = outliers_sf, aes(color = forested), size = 2) +
+    tidyterra::scale_fill_hypso_c(palette = "usgs-gswa2", name = "Elevation", na.value = "transparent") +
+    
+    # Layer B: Hillshade Shadow Mask
+    tidyterra::geom_spatraster(
+      data = hill_terra, 
+      ggplot2::aes(alpha = ggplot2::after_stat(value)), 
+      fill = "black", 
+      show.legend = FALSE
+    ) +
+    ggplot2::scale_alpha(range = c(0.6, 0), guide = "none", na.value = 0) +
+    
+    # Layer C: Vectors
+    ggplot2::geom_sf(data = wa_boundary_sf, fill = NA, color = "black", linewidth = 0.5) +
+    ggplot2::geom_sf(data = outliers_sf, ggplot2::aes(color = forested), size = 2) +
     ggplot2::scale_color_manual(values = c("Yes" = "#2D5A27", "No" = "#A0522D")) +
-    # Restored Labels
+    
+    # Layer D: Labels
     ggrepel::geom_label_repel(
       data = wa_peaks_sf,
       ggplot2::aes(label = peak, geometry = geometry),
@@ -359,11 +387,31 @@ save_outlier_map_png <- function(data, boundary_sf, raster_path, output_path) {
       fontface = "bold",
       box.padding = 0.5
     ) +
+    
+    # Theme Updates: Restoring the Grid and Box
     ggplot2::theme_minimal() +
-    ggplot2::labs(x = "", y = "") +
-    ggplot2::theme(text = ggplot2::element_text(size = 14))
+    ggplot2::labs(x = "Longitude", y = "Latitude") +
+    ggplot2::theme(
+      text = ggplot2::element_text(size = 14, color = "black"), # Ensure text is black
+      
+      # Transparent Backgrounds
+      plot.background = ggplot2::element_rect(fill = "transparent", color = NA),
+      panel.background = ggplot2::element_rect(fill = "transparent", color = NA),
+      
+      # Restore Graticules (Grid Lines) - Subtle Gray
+      panel.grid.major = ggplot2::element_line(color = "gray70", linetype = "dashed", linewidth = 0.3),
+      panel.grid.minor = ggplot2::element_blank(),
+      
+      # Restore Bounding Box - Crisp Black Frame
+      panel.border = ggplot2::element_rect(color = "black", fill = NA, linewidth = 1),
+      
+      # Restore Axis Text
+      axis.text = ggplot2::element_text(color = "black"),
+      axis.title = ggplot2::element_text(color = "black", face = "bold")
+    )
   
-  ggplot2::ggsave(output_path, plot = plt, width = 10, height = 6)
+  # Save with transparent background
+  ggplot2::ggsave(output_path, plot = plt, width = 10, height = 6, bg = "transparent")
   return(output_path)
 }
 
