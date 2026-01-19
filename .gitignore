@@ -16,3 +16,4 @@ _targets.user        # Ignore local targets user metadata
 *_files/             # Ignore temporary rendering files.Rproj.user
 .Rproj.user
 .Rproj.user
+index_cache/

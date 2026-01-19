@@ -13,31 +13,20 @@ forested_ga|stem|4066e6dc9609bc0b|901f82f0f8aa5db1|2c530c1562a7fbd1|644804518||t
 forest_us|stem|f8ef12dffe1f099a|f9cfe37305dec490|a75b4e771f98459c|56439762||t20461.4606360313s|s679751b|679751|rds|local|vector|||0.003||
 tbl_forest_us_summary|stem|cd3de532940fe8bd|7b923d05b1db5fa8|9b0e661e30711533|451764908||t20461.4723907028s|s11290b|11290|rds|local|vector|||0.013||
 map_biophysical_outliers_sf|function|823e23298972cfe5
-boundary_ga_sf|stem|0c3bcec9fb1ada51|c6ed783e26dfc09c|2a5244fe7b66b544|189948494||t20461.4787112045s|s1223b|1223|rds|local|vector|||2.742||
-boundary_wa_sf|stem|19e150b354934bd7|c9ca80ee0160f2d4|2a5244fe7b66b544|-327773459||t20461.4787120957s|s1176b|1176|rds|local|vector|||0.045||
-wa_ga_map|stem|310311c6df6df287|cee481a2d732aed2|ff0155c998952021|-537964005||t20461.4787128712s|s1730b|1730|rds|local|vector|||0.045||
 forested_us|stem|a7f7b04c97634441|f1c21fceb5c60485|931c24d5e78cf7c6|876759784||t20461.4787139244s|s679574b|679574|rds|local|vector|||0.001||
 variable_distrib|stem|7d15ee3e48e96a92|381697197f6e8aa6|47ae4215ff74a73d|-1398059403||t20461.478724121s|s1273508b|1273508|rds|local|vector|||0.025||
 data_summary|stem|06a5e5f01c5d7306|8966f34bc782c487|8ee2c7de01ed47b0|-651121042||t20461.4787245724s|s1033b|1033|rds|local|vector|||0.03||
-wa_elev_file|stem|9044af765dbb0bc3|8ccf5b053f33d2b5|3619c7caf39f34d1|1944262089|data/wa_elevation.tif|t20461.4787744676s|s2186049b|2186049|file|local|vector|||4.323||
-map_us|stem|10fef1845d962b50|984521b37d2ea981|1d0e6822d4851e17|479175181||t20461.4787883563s|s5532859b|5532859|rds|local|vector|||0.523|None of your features are in Alaska, Hawaii, or Puerto Rico, so no geometries will be shifted. Transforming your object's CRS to 'ESRI:102003'|
 tbl_wa_summary|stem|7c2e4fcadd5492d9|71deee6ed9c98f9c|7472b83857f838f8|-657595788||t20461.478794097s|s11305b|11305|rds|local|vector|||0.011||
-map_wa_outliers|stem|c359e74603697e95|2f01fcaa6977bdc3|1c6c56c3fe6f48a0|-1030335457|figs/wa_outliers.png|t20461.4935032747s|s847419b|847419|file|local|vector|||3.064|Using one column matrices in `filter()` was deprecated in dplyr 1.1.0. ℹ Please use one dimensional logical vectors instead.. st_point_on_surface may not give correct results for longitude/latitude data|
-map_wa_ga|stem|b32af7edd7279e6b|ba4d8b7c3e42b986|076f66fbf07a73a7|-1348452101||t20461.5008842434s|s5794943b|5794943|rds|local|vector|||0.139||
 plt_outliers|stem|1f928d7ac3bd06d0|81ced3f51eb3c328|790fb654ec51d04b|-323837079||t20461.5039930957s|s2767807b|2767807|rds|local|vector|||0.076||
 plt_wa_pca|stem|709d492ee938f455|e1aee03c3466fa1d|d39d3215623152b1|-507500259||t20461.5139892965s|s4203161b|4203161|rds|local|vector|||0.072||
 plot_correlogram|function|3762471b495a4433
 plot_forested_correlations|function|ea4e7c3e684a7002
 plt_correlogram|stem|509cd76dbcb584ee|b2581b685857d978|2bced228538ffe20|-1452654926||t20461.5695053345s|s882948b|882948|rds|local|vector|||0.069||
-plt_vip|stem|f9b9ae16348e2849|b1335ae312db100e|c52b4039ec2aa5f4|-623821603||t20461.6160325902s|s3110020b|3110020|rds|local|vector|||1.381||
 umap_plot|stem|44e62c149706f689|956b2dbfb97cc8af|2c491a9a606656d5|863757455||t20462.5206051323s|s3093894b|3093894|rds|local|vector|||19.576||
 eco_url|stem|ce8fd06148e7efc9|6921441170bbcaf4|2c530c1562a7fbd1|1416681613|https://dmap-prod-oms-edc.s3.us-east-1.amazonaws.com/ORD/Ecoregions/us/us_eco_l3.zip|t20466.4706161597s||0|url|local|vector|||2.855||
 data_dir|stem|7a2029d44824ed58|8b01b39059520a55|2c530c1562a7fbd1|-145075625|data/epa|t20465.4869941458s|s28424315b|28424315|file|local|vector|||2.792||
 eco_zip_file|stem|7a2029d44824ed58|0d9de255d7043609|34ef97e6cbe8f300|-209742487|data/epa/us_eco_l3.zip|t20465.4869941458s|s28424315b|28424315|file|local|vector|||0||
-eco_data|stem|c7b8927eac76887f|58cc8f03affd8acd|7c24ffd8eec933da|1985198847||t20466.4737935522s|s80490b|80490|rds|local|vector|||4.169|attribute variables are assumed to be spatially constant throughout all geometries|
 plot_comparison|stem|65040364ac1da344|f5da256040b0baea|46647d2df089844a|-1523103675||t20466.4738000915s|s1555530b|1555530|rds|local|vector|||0.274|There were 2 warnings in `stopifnot()`. The first warning was: ℹ In argument: `lon = st_coordinates(st_point_on_surface(geometry))[, 1]`. Caused by warning in `st_point_on_surface.sfc()`: ! st_point_on_surface may not give correct results for longitude/latitude data ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning.. There were 2 warnings in `stopifnot()`. The first warning was: ℹ In argument: `lon = st_coordinates(st_point_on_surface(geometry))[, 1]`. Caused by warning in `st_point_on_surface.sfc()`: ! st_point_on_surface may not give correct results for longitude/latitude data ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning.|
-map_ecoregion_comparison|stem|c4053130508dfb56|f5da256040b0baea|cdd1df7afd81e49f|-2123837280||t20466.4974190666s|s1558176b|1558176|rds|local|vector|||0.296|There were 2 warnings in `stopifnot()`. The first warning was: ℹ In argument: `lon = st_coordinates(st_point_on_surface(geometry))[, 1]`. Caused by warning in `st_point_on_surface.sfc()`: ! st_point_on_surface may not give correct results for longitude/latitude data ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning.. There were 2 warnings in `stopifnot()`. The first warning was: ℹ In argument: `lon = st_coordinates(st_point_on_surface(geometry))[, 1]`. Caused by warning in `st_point_on_surface.sfc()`: ! st_point_on_surface may not give correct results for longitude/latitude data ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning.|
-save_plot|stem|cc733d65e707e6cb|079f826d8670d4ea|e3f12f925897046f|-1898771178|figs/ecoregion_comparison.png|t20466.4975689144s|s542381b|542381|file|local|vector|||0.55||
 plot_cv_comparison|stem|83491507d6a61860|cfc93bd40b2d2024|efe5d8d4e4714272|640033771||t20466.8428955518s|s13744741b|13744741|rds|local|vector|||2.405||
 spec_mars|stem|4df34c6f35527c90|813c0156fa34b418|2c530c1562a7fbd1|1500571923||t20467.4462273909s|s326b|326|rds|local|vector|||3.227||
 spec_logistic|stem|2fb298a259e7ec92|0591c95b860ed296|2c530c1562a7fbd1|-1244573532||t20467.4462276339s|s289b|289|rds|local|vector|||0.001||
@@ -47,40 +36,71 @@ wa_sf|stem|39f3479568c844ba|a54f8a5bba3d64f6|eb0954bdf1eefb6a|-2116683015||t2046
 splits|stem|70ef84d587249c95|6bfaf49af8529150|25a0b078816eb3a5|-1848090122||t20467.4571796816s|s418973b|418973|rds|local|vector|||0.008||
 train_data|stem|f75774442a623603|b70b0a8a5e3d2c18|f0bed4e1bda37579|1410565984||t20467.4571803992s|s321557b|321557|rds|local|vector|||0.003||
 test_data|stem|7231dbc566431db5|36950b097efad8bb|f0bed4e1bda37579|771182612||t20467.4571806654s|s88242b|88242|rds|local|vector|||0.001||
-recipe_base|stem|9ff488090368c195|fedf48c17cefeb98|8b5911dcf189ad46|-1590154186||t20467.45718695s|s1617197b|1617197|rds|local|vector|||0.012||
 recipe_spatial|stem|3b2395f3d7443c7d|ce881c9308136e4f|8b5911dcf189ad46|-722200210||t20467.4582810345s|s1941108b|1941108|rds|local|vector|||0.015||
-model_set|stem|c94b1ecd82142ce8|66ffddca79c96f04|fabd455289eca503|-1696100659||t20467.4585304644s|s5508833b|5508833|rds|local|vector|||0.018||
 n_folds|stem|1a0f65ad50d470ef|283bbb5a254c0461|2c530c1562a7fbd1|724011503||t20467.4616946521s|s50b|50|rds|local|vector|||3.474||
 folds_block|stem|107c092dfcdf1455|72a8b2b2a0dbcddd|7f7c2eaf8841ebf5|-734361840||t20467.4618496619s|s3355421b|3355421|rds|local|vector|||0.718||
 folds_cluster|stem|4f78c950cbe2cc7a|59efdd1d89019d3f|7f7c2eaf8841ebf5|441062540||t20467.4622005027s|s7041481b|7041481|rds|local|vector|||29.602||
 folds_random|stem|569266496af15a34|3f087eb9e7d69846|7f7c2eaf8841ebf5|-1644848936||t20467.462204623s|s3355207b|3355207|rds|local|vector|||0.008||
-results_cluster|stem|9c0cb6f24a90d24f|f65d1ff0868a2345|0123eea831bc4733|-906050631||t20467.4713629284s|s85241935b|85241935|rds|local|vector|||92.171||
-results_block|stem|e31b60fc58a63994|d722d4d046635caf|a00cf9962892ada4|-1992481963||t20467.4724927414s|s59306505b|59306505|rds|local|vector|||91.716||
-results_random|stem|7479f1aee71bbaab|faad3c5336ac2cb2|0b539446d6558f32|-962919896||t20467.4736086195s|s59291424b|59291424|rds|local|vector|||90.695||
-fig_cv_comparison|stem|f8b16e83c1f7d0ef|ef746d284f476b2a|23a79bcf382c2064|-258705259||t20468.0224000201s|s204265314b|204265314|rds|local|vector|||0.872||
-fig_spatial_vip|stem|8d11ad753e22bcd2|ddc1a6688fe30184|d7976c359eec7fe6|-1439230298||t20468.0622286254s|s204257554b|204257554|rds|local|vector|||7.569||
-create_elevation_raster|function|e7d31314aac3a488
-save_outlier_map_png|function|99cfc3aa6549d766
-compare_univariate_distribution|function|1df38f6bada1c2a4
-plot_correlations|function|43907d01dbc25e12
+wa_ga_map|stem|e997296393a5e27d|cee481a2d732aed2|38f4008616982a64|-537964005||t20468.4162138953s|s2492b|2492|rds|local|vector|||3.814||
+boundary_wa_sf|stem|43cb3dc538db4700|c9ca80ee0160f2d4|5ab25d454cc0ff91|-327773459||t20468.4188141074s|s1573b|1573|rds|local|vector|||3.985||
+boundary_ga_sf|stem|12cc875cea5d922a|c6ed783e26dfc09c|5ab25d454cc0ff91|189948494||t20468.4188173944s|s1617b|1617|rds|local|vector|||0.05||
+wa_elev_file|stem|0ec3149ab9b4d526|8ccf5b053f33d2b5|a877424d4f52a500|1944262089|data/wa_elevation.tif|t20468.4188721623s|s2196414b|2196414|file|local|vector|||4.721||
+map_wa_outliers|stem|827881f2c056e7a1|2f01fcaa6977bdc3|1be3bd6b3b64abaa|-1030335457|figs/wa_outliers.png|t20468.4189136317s|s862053b|862053|file|local|vector|||3.542|Using one column matrices in `filter()` was deprecated in dplyr 1.1.0. ℹ Please use one dimensional logical vectors instead.. st_point_on_surface may not give correct results for longitude/latitude data|
+fig_fold_mechanics|stem|1151d9c7772a38a6|494ede46920dd5fc|2be1b6b086cf2d0f|1290943718||t20468.8765539004s|s15762868b|15762868|rds|local|vector|||2.366||
+map_us|stem|771f6e2068ce6764|984521b37d2ea981|0eaa4578cc5392fe|479175181||t20468.9383382783s|s5659700b|5659700|rds|local|vector|||0.79|None of your features are in Alaska, Hawaii, or Puerto Rico, so no geometries will be shifted. Transforming your object's CRS to 'ESRI:102003'. None of your features are in Alaska, Hawaii, or Puerto Rico, so no geometries will be shifted. Transforming your object's CRS to 'ESRI:102003'. The `size` argument of `element_line()` is deprecated as of ggplot2 3.4.0. ℹ Please use the `linewidth` argument instead.|
+draw_study_sites_map|function|983da5923f00345b
+fig_us_map|stem|f158ad693b80a9cf|18d312cc4d1a20bd|52a37f4f02164ef9|997186358||t20469.0113874005s|s579721b|579721|rds|local|vector|||3.635|None of your features are in Alaska, Hawaii, or Puerto Rico, so no geometries will be shifted. Transforming your object's CRS to 'ESRI:102003'|
+eco_data|stem|c7b8927eac76887f|58cc8f03affd8acd|44faf0538f7b064a|1985198847||t20469.0260965546s|s80490b|80490|rds|local|vector|||4.323|attribute variables are assumed to be spatially constant throughout all geometries|
+map_wa_ga|stem|2b098f724a9bda99|ba4d8b7c3e42b986|798d50998dcf297b|-1348452101||t20469.0285817703s|s5878355b|5878355|rds|local|vector|||0.147||
+map_ecoregion_comparison|stem|5302b1d93d5a1c5c|f5da256040b0baea|5d350802ec8369ce|-2123837280||t20469.0316011242s|s1604097b|1604097|rds|local|vector|||0.31|There were 2 warnings in `stopifnot()`. The first warning was: ℹ In argument: `lon = st_coordinates(st_point_on_surface(geometry))[, 1]`. Caused by warning in `st_point_on_surface.sfc()`: ! st_point_on_surface may not give correct results for longitude/latitude data ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning.. There were 2 warnings in `stopifnot()`. The first warning was: ℹ In argument: `lon = st_coordinates(st_point_on_surface(geometry))[, 1]`. Caused by warning in `st_point_on_surface.sfc()`: ! st_point_on_surface may not give correct results for longitude/latitude data ℹ Run `dplyr::last_dplyr_warnings()` to see the 1 remaining warning.|
+save_plot|stem|af19b9d93e5ea8d4|079f826d8670d4ea|c6389e6f61fdbd74|-1898771178|figs/ecoregion_comparison.png|t20469.0316134273s|s546173b|546173|file|local|vector|||0.941||
+fig_classic_cv|stem|f42f1f65b46700a8|e011d2efd4384ba9|ad1c17dc0d689cae|1404603404||t20469.8377671432s|s362121b|362121|rds|local|vector|||3.314||
+model_performance|stem|4978610242257f1f|c167912cd9cae129|60c49f8d1b957b99|-442745722||t20470.3799337398s|s518b|518|rds|local|vector|||0.184||
+recipe_base|stem|d9cffd2a9cedd421|89a39680160ee70b|8b5911dcf189ad46|-1590154186||t20472.009673107s|s1941717b|1941717|rds|local|vector|||0.017||
+recipe_non_spatial|stem|9f518cda77930222|f35403378bc0d959|8b5911dcf189ad46|-1731754431||t20472.0096755607s|s1941763b|1941763|rds|local|vector|||0.007||
+recipe_extensible|stem|0cd137530942eb32|9e3eee8018074525|8b5911dcf189ad46|1426731273||t20472.0096798546s|s3561337b|3561337|rds|local|vector|||0.008||
+model_set|stem|5b65d67d69bfdaf7|c42a324bf712b91e|e5054008e9fa6fea|-1696100659||t20472.0104919637s|s10371920b|10371920|rds|local|vector|||0.03||
+results_cluster|stem|658617de0bd403ee|f65d1ff0868a2345|fe166c1ba3470152|-906050631||t20472.0123024065s|s111271423b|111271423|rds|local|vector|||145.906||
+results_block|stem|cf5450429cec6aec|d722d4d046635caf|e0471aa205198e82|-1992481963||t20472.0140951411s|s107870144b|107870144|rds|local|vector|||145.421||
+results_random|stem|af2b782e813ec3ef|faad3c5336ac2cb2|091629c435f0f64f|-962919896||t20472.0158687677s|s118231370b|118231370|rds|local|vector|||143.329||
+best_model_id|stem|e74f2af1cb45ac2b|af653b0f3d2bd27f|8a530bb256b00cbf|724376238||t20472.0159065336s|s67b|67|rds|local|vector|||0.233||
+tbl_model_performance|stem|a44ee71a81c31a85|c167912cd9cae129|8a530bb256b00cbf|-978651674||t20472.0159376792s|s632b|632|rds|local|vector|||0.181||
+fig_spatial_vip|stem|cd4beb2e475f65fa|4806ddcba8a37154|15441fd48a950efc|-1439230298||t20472.0358823633s|s337778421b|337778421|rds|local|vector|||7.303||
+final_fit_results|stem|4be491f7df5075b1|5ab397e5d4524aef|ebd2c0f7b027d825|1873004518||t20472.0363369417s|s6731621b|6731621|rds|local|vector|||0.708||
+fig_model_stability|stem|63dc844614cd3de8|79dc0293fc0d239b|8a3749e4004dba03|-1222832372||t20472.0429117936s|s337795488b|337795488|rds|local|vector|||0.093|Ignoring unknown parameters: `outlier.shape`|
+fig_confusion_matrix|stem|8606675889e31600|05ef64a2c518ad9b|34ea85136e71f3c8|-1361169079||t20472.0429243513s|s424471b|424471|rds|local|vector|||0.053||
+fig_final_performance|stem|6d734f66605ae827|605110414194baf1|980ecdc1efd2544a|1991778141||t20472.0429327424s|s7163618b|7163618|rds|local|vector|||0.039||
+fig_cv_comparison|stem|173c6d45e4859fbb|ef746d284f476b2a|1003f723f7f2107b|-258705259||t20472.0615895731s|s337793012b|337793012|rds|local|vector|||0.36||
+tbl_performance|stem|173e515a235654d2|48d51d2385b59fcb|1e583424ef726a38|-1551511671||t20472.0679533132s|s118007447b|118007447|rds|local|vector|||0.268||
+plt_vip|stem|eb636d81a2f2dd47|b1335ae312db100e|c52b4039ec2aa5f4|-623821603||t20472.7575971824s|s3181098b|3181098|rds|local|vector|||1.773||
+plot_yeo|stem|a92026770af3585d|f21cc60d6038c7e4|f42833516273f7d8|2098853526||t20472.823681997s|s1329446b|1329446|rds|local|vector|||0.12||
+plot_regional_comparison|function|a7308122330f93ae
+.Random.seed|object|37e36b4b558c84fd
+create_performance_table|function|16b867dde5ffaf4c
+plot_yeo_johnson|function|a70d902df1b22d84
+plot_final_confusion_matrix|function|416ee809c03b13ce
+plot_fold_mechanics|function|ba7d9ea41f4512cd
 identify_outliers|function|7525c8052a54d542
-plot_ecoregion_comparison|function|23305446616e4e8d
-combine_forest|function|d707f456a058f32f
-.Random.seed|object|73b94b923eac3c22
-plot_cv_strategies|function|acac067da2cfb7ab
-plot_spatial_cv_comparison|function|c7bdcf5a838705a9
-plot_spatial_vip_comparison|function|494982012e043008
-style_audit_table|function|df7394dd76b3f20b
-plot_regional_comparison|function|8abbfc2cff115692
-plot_wa_pca|function|11e48cc6dfd51624
-create_stats_summary|function|a4f84db37b415ee6
-process_ecoregions|function|e2cb3ab659ffc335
-draw_us_map|function|1ea38e7c3869ad7a
-plot_umap_forested|function|ec26c78516d2be89
-fetch_study_area|function|f3f83066daf7fb26
-get_epa_ecoregions|function|76add3e9b8752264
-fetch_state_boundary|function|336301eea35df9d3
+save_outlier_map_png|function|99cfc3aa6549d766
+draw_us_map|function|983da5923f00345b
+compare_univariate_distribution|function|1df38f6bada1c2a4
+create_elevation_raster|function|e7d31314aac3a488
 plot_rf_importance|function|26ee16546862388c
-plot_model_stability|function|dbcc8794171509c5
-fig_model_stability|stem|5fbc939c8ea31a77|d9f5f7514f9d8fbc|6fa8e3373d81780d|-1222832372||t20468.0864038882s|s204272345b|204272345|rds|local|vector|||0.711|Ignoring unknown parameters: `outlier.shape`|
-report|stem|48249dad120eea2a|305d5e177b44d03a|7d9d14440a4a5add|787668912|index_files*index.html*index.qmd|t20468.0869636159s|s20697169b|20697169|file|local|vector|||30.459||
+fetch_study_area|function|2779cfcc38a22eec
+plot_umap_forested|function|ec26c78516d2be89
+plot_ecoregion_comparison|function|2e9820e70d2e7fa2
+style_audit_table|function|df7394dd76b3f20b
+get_epa_ecoregions|function|76add3e9b8752264
+plot_classic_kfold_diagram|function|344589a34cdd751e
+plot_model_stability|function|f776d3c5f94a7003
+plot_spatial_vip_comparison|function|5fa1dd656c8a014b
+create_stats_summary|function|a4f84db37b415ee6
+process_ecoregions|function|586fd3cc8ab17520
+plot_spatial_cv_comparison|function|22488e944c8c810b
+plot_correlations|function|43907d01dbc25e12
+plot_cv_strategies|function|acac067da2cfb7ab
+plot_final_test_results|function|77da897ab310272a
+combine_forest|function|d707f456a058f32f
+plot_wa_pca|function|11e48cc6dfd51624
+fetch_state_boundary|function|4b4b35294bd5418f
+report|stem|6e45b2e70cc6c91a|8690dbe87c8c916a|9b00011ae35a24a3|787668912|index_files*index.html*index.qmd|t20472.830332324s|s23889994b|23889994|file|local|vector|||36.58||

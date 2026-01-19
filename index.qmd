@@ -9,13 +9,16 @@ format:
     scrollable: true 
     chalkboard: 
       buttons: true
+    tbl-cap-location: bottom
 execute:
   echo: false
+  cache: false
 bibliography: references.bib
 csl: ieee-access.csl
 nocite: |
   @*
 ---
+
 
 ```{r}
 #| label: setup
@@ -24,8 +27,6 @@ library(here)
 library(targets)
 library(gt)
 ```
-
-
 
 # Introduction
 
@@ -61,9 +62,8 @@ library(gt)
 
 :::
 
-## The Autocorrelation Trap{text-align="center"}
+## The First Law of Geography
 
-<br>
 <br>
 <br>
 
@@ -81,9 +81,20 @@ library(gt)
 
 :::
 
-## The Goal of Prediction {text-align="center"}
+## Law or Guidepost
 
 <br/>
+<br/>
+
+>"It is not and has never been the case that Tobler’s first law of geography . . . always holds absolutely. This is and has always been an oversimplification, disguising possible underlying entitation, support, and other misspecification problems."[@pebesma_spatial_2025]
+
+::: {.notes}
+
+:::
+
+
+## The Goal of Prediction {text-align="center"}
+
 <br/>
 <br/>
 
@@ -98,45 +109,23 @@ library(gt)
 
 :::
 
-## Regional Regimes
-
-:::: {.columns}
-
-::: {.column width="50%"}
-### Drivers of Growth
-* **Washington**: Topographically driven; governed by orographic lift and rain shadows.
-* **Georgia**: Climatically driven; limited by seasonal moisture stress and drainage.
-:::
-
-::: {.column width="50%"}
-### Site Constraints
-* **WA**: Timberline limits and cold (cryic) soil regimes.
-* **GA**: Highly weathered acidic Ultisols and bottomland saturation.
-:::
-
-::::
-
-::: {.notes}
-**Speaker Notes:**
-* **Washington**: Forestation is restricted by the Cascade rain shadow and high-elevation cold.
-* **Georgia**: Patterns are a mosaic of agricultural land use and timber production on red clay (Ultisols).
-:::
-
-
-
-## Forest Location
+## Forest Locations
 
 ```{r}
-#| label: Map of United States
-#| echo: false
-tar_read(map_us)
+#| label: fig-us-map
+#| fig-cap: "Map shows the geographic distance separating Washington and Georgia."
+tar_read(fig_us_map)
 ```
+
+:::{.notes}
+- Washington is approximately 15 degrees north of Georgia and 30 degrees west.
+- the sheer distance suggests that the respective forests are different.
+:::
 
 ## Regional Forestation
 
 ```{r}
-#| label: Map of Georgia and Washington
-#| echo: false
+#| label: fig-map-wa-ga
 #| fig-cap: "Caution: States are rescaled independently to maximize clarity."
 tar_read(map_wa_ga)
 ```
@@ -343,6 +332,36 @@ tar_read(umap_plot)
 
 # Resampling
 
+## Spatial Autocorrelation
+
+<br/>
+<br/>
+
+>"When data are not independent (e.g. due to spatial autocorrelation), random cross-validation yields optimistic estimates of predictive performance because training and test sets are not independent."[@roberts_crossvalidation_2017]
+
+:::{.notes}
+**1. Translation of the Quote**
+
+This quote describes the "Golden Rule" of geography: "Everything is related to everything else, but near things are more related than distant things."
+
+**2. Definition: Spatial Autocorrelation**
+
+Spatial Autocorrelation just means that data points close to each other are practically clones. If it's raining at your house, it's probably raining at your neighbor's house.
+
+**3. forested dataset**
+
+Forests are "clumpy." If you stand next to a Douglas Fir in Washington and take one step to the left, you are almost certainly still in a forest. The elevation, soil, and rain are identical.
+
+**4. Why Random CV is "Optimistic" (The Cheating)**
+
+- When the standard **Random Cross-Validation** is used, the first tree is assigned to the "Study Group" and the second tree (one step away) to the "Test Group."
+
+- The model doesn't learn ecology. It just looks at the neighbor (lat and lon) and copies the answer.
+
+- This gives us an **"Optimistic Estimate"**—a fancy way of saying our high score was fake because the model was cheating off its neighbor.
+
+:::
+
 ## The Mechanics of Resampling
 
 ```{r}
@@ -370,32 +389,14 @@ knitr::include_graphics(here::here("images", "resampling.svg"))
 - **The Why:** As we discussed, simply re-predicting the training set is problematic (it leads to optimism bias). Resampling allows us to get a realistic appraisal using the training set without ever touching the final test data.
 :::
 
-## Spatial Autocorrelation
+## Random K-Fold Cross-Validation
 
->"When data are not independent (e.g. due to spatial autocorrelation), random cross-validation yields optimistic estimates of predictive performance because training and test sets are not independent."[@roberts_crossvalidation_2017]
+```{r}
+#| label: fig-classic-cv
+#| fig-cap: "Conceptual diagram showing the random assignment of observations to the analysis and assessment groups."
+tar_read("fig_classic_cv")
+```
 
-:::{.notes}
-**1. Translation of the Quote**
-
-This quote describes the "Golden Rule" of geography: "Everything is related to everything else, but near things are more related than distant things."
-
-**2. Definition: Spatial Autocorrelation**
-
-Spatial Autocorrelation just means that data points close to each other are practically clones. If it's raining at your house, it's probably raining at your neighbor's house.
-
-**3. forested dataset**
-
-Forests are "clumpy." If you stand next to a Douglas Fir in Washington and take one step to the left, you are almost certainly still in a forest. The elevation, soil, and rain are identical.
-
-**4. Why Random CV is "Optimistic" (The Cheating)**
-
-- When the standard **Random Cross-Validation** is used, the first tree is assigned to the "Study Group" and the second tree (one step away) to the "Test Group."
-
-- The model doesn't learn ecology. It just looks at the neighbor (lat and lon) and copies the answer.
-
-- This gives us an **"Optimistic Estimate"**—a fancy way of saying our high score was fake because the model was cheating off its neighbor.
-
-:::
 
 ## Cross Validation Strategies
 
@@ -427,6 +428,150 @@ tar_read(plot_cv_comparison)
 - By holding out entire environments (e.g., training on "Wet Coastal" to predict "Dry Plateau"), we test if the model captures the fundamental biological relationships (e.g., how temp/rain affect trees) rather than just memorizing geographic trends.
 :::
 
+## Analysis vs. Assessment
+
+```{r}
+#| label: fig-mechanics
+#| fig-cap: "Visualization of Fold 1 across three cross-validation strategies. Magenta points represent the held-out assessment set."
+tar_read(fig_fold_mechanics)
+```
+
+::: {.notes}
+- **Visualizing the Split**: This slide illustrates Fold 1 of 5; gray points represent the "Analysis" set used for training, while magenta points represent the "Assessment" set the model must predict.
+- **Confetti vs. Blocks**: The Random split (left) creates a "confetti" effect where every test point is surrounded by nearby training points, leading to the spatial autocorrelation and "optimism bias" we discussed earlier.
+- **Geographic and Ecological Isolation**: The middle and right maps show how we force the model to predict across geographic and ecological gaps. 
+- **The Columbia Plateau Test**: Specifically in the Environmental Clustering map (right), the entire Columbia Plateau is isolated as a test set.
+- **Validating Results**: Because the model had to "learn" forests in the mountains to predict the Plateau, we gained high confidence in its performance there, which was later confirmed by the near-zero error rate in that region.
+- **Preparation for Georgia**: This level of isolation is a direct rehearsal for our next step, where we move from the Washington ecoregions to the completely unfamiliar landscapes of Georgia.
+:::
+
+# Models
+
+## Engines
+
+::: {.incremental}
+1. Logistic Regression
+2. MARS
+3. Random Forest
+4. XGBoost
+:::
+
+::: {.notes}
+**Logistic Regression:**
+Simple, interpretable baseline. Captures linear relationships efficiently.
+
+**MARS:**
+Models non-linearities automatically. Good balance between linear and trees.
+
+**Random Forest:**
+Robust ensemble method. Reduces overfitting through averaging.
+
+**XGBoost:**
+High-performance gradient boosting. Often dominates on tabular data.
+:::
+
+
+## Recipe A: With Coords
+
+```{.r code-line-numbers="2|3"}
+recipe(forested ~ ., data = train_data) %>%
+  # geometry is ID, but lat/lon remain as predictors
+  update_role(geometry, new_role = "id") %>%
+  step_novel(all_nominal_predictors()) %>%
+  step_dummy(all_nominal_predictors()) %>%
+  step_zv(all_predictors()) %>%
+  step_normalize(all_numeric_predictors())
+```
+
+::: {.notes} 
+**Base Strategy:** Standard approach uses latitude and longitude as predictive features. Risk is the model memorizing locations instead of learning rules. 
+:::
+
+## Recipe B: No Coords
+
+```{.r code-line-numbers="2|3"}
+recipe(forested ~ ., data = train_data) %>%
+  # Explicitly remove lat/lon from training
+  update_role(geometry, lat, lon, new_role = "id") %>%
+  step_novel(all_nominal_predictors()) %>%
+  step_dummy(all_nominal_predictors()) %>%
+  step_zv(all_predictors()) %>%
+  step_normalize(all_numeric_predictors())
+```
+
+::: {.notes} 
+
+**Non-Spatial:** Removes explicit coordinates to prevent spatial overfitting. Forces the model to rely solely on biological environmental signals. 
+
+:::
+
+## Recipe C: Extensible
+
+```{.r code-line-numbers="4-10|12"}
+recipe(forested ~ ., data = train_data) %>%
+  update_role(geometry, lat, lon, new_role = "id") %>%
+  # 1. Remove political/time markers
+  step_rm(northness, county, year) %>%
+  # 2. Add Physics (Aridity & Temp Range)
+  step_ratio(precip_annual, denom = denom_vars(temp_annual_max)) %>%
+  step_mutate(
+    temp_range = temp_annual_max - temp_annual_min,
+    vpd_range = vapor_max - vapor_min
+  ) %>%
+  # 3. Fix Skew (Critical for Logistic Regression)
+  step_YeoJohnson(elevation) %>%
+  step_dummy(all_nominal_predictors()) %>% 
+  step_normalize(all_numeric_predictors())
+```
+
+::: {.notes} 
+**Extensible:** Engineers physics-based features like aridity and temperature range. Transforms skewed variables to help linear models extrapolate to new regions. 
+:::
+
+## YeoJohnson Transformation
+
+```{r}
+#| echo: false
+#| fig-align: center
+#| fig-width: 10
+#| fig-height: 5
+#| fig-cap: "<b>Normalizing Elevation via Yeo-Johnson Transformation.</b> The raw elevation data (left) exhibits strong right-skewness, which can degrade linear model performance. Applying a Yeo-Johnson transformation with λ=0.49 (right) successfully normalizes the distribution, satisfying the linearity assumptions required for the Extensible Logistic Regression model."
+tar_read(plot_yeo)
+```
+
+:::{.notes} 
+Why this matters:
+
+- **The Problem (Left):** Raw elevation data is highly skewed. Linear models (like Logistic Regression) struggle with this because they assume a consistent relationship across the range.
+
+- **The Solution (Right):** The Yeo-Johnson transformation normalizes the distribution (bell curve).
+
+- **The Result:** This allows the model to "see" the signal clearly, improving stability when moving to new regions like Georgia. 
+:::
+
+## Resampling Strategies
+
+```{.r code-line-numbers="2|5|8"}
+# A. Random Folds (Standard)
+vfold_cv(train_data, v = 10, strata = forested)
+
+# B. Spatial Blocks (Grid-based)
+spatial_block_cv(train_data, v = 10)
+
+# C. Spatial Clustering (Region-based)
+spatial_clustering_cv(train_data, v = 10)
+```
+
+::: {.notes} 
+
+- **Random Folds:** Standard approach. Randomly shuffles data. Dangerous here because it allows "cheating" via nearby pixels.
+
+- **Spatial Blocks:** Divides the map into a checkerboard. Forces the model to predict on a blind grid square.
+
+- **Spatial Clustering:** Uses K-means to create distinct ecological zones. The hardest test—simulates moving to a totally new region.
+:::
+
+
 # Results
 
 ## Spatial Validation Analysis
@@ -452,25 +597,6 @@ tar_read(fig_cv_comparison)
 :::
 
 
-## VIP Comparison
-
-```{r}
-#| label: fig-vip-comparison
-#| fig-cap: "Variable Importance (VIP) for spatial coordinates across CV strategies."
-#| echo: false
-#| message: false
-
-tar_read(fig_spatial_vip)
-```
-
-::: {.notes}
-- **Perspective on Scale:** While coordinates show significant importance here, keep in mind this is a filtered view. In the full model, environmental variables like **canopy cover** achieve importance scores 3 to 4 times higher (often in the 300–400 range), indicating the model is primarily driven by physical forest structure.
-- **The "Crutch" Effect:** In Random CV (blue dots), Latitude and Longitude show high relative importance. The model uses these as a "crutch" to memorize the specific locations of forest plots rather than learning environmental drivers.
-- **Geographic Decay:** As we move to Block and Cluster CV, the model is forced to find signal in environmental variables because specific coordinates are no longer reliable predictors for distant geographic partitions.
-- **Persistent Importance:** The lack of a dramatic "crash" in coordinate importance during Cluster CV suggests the model is identifying broad regional gradients (a "map") that remain predictive across different clusters, rather than just memorizing local points (a "cheat sheet").
-- **Structural Bias:** Note that these are impurity-based scores. The Random Forest algorithm favors continuous variables like Lat/Lon because they offer many unique split points, which can inflate their importance relative to categorical environmental data.
-:::
-
 ## Performance Stability
 
 
@@ -491,7 +617,57 @@ tar_read(fig_model_stability)
 - **Stakeholder Transparency:** This variance is a critical insight for stakeholders, as it defines the geographic boundaries of where the model's predictions can be most (and least) trusted.
 :::
 
+## Predict on Test Set
 
+```{r}
+#| label: fig-final-test
+tar_read(fig_final_performance)
+```
+
+::: {.notes}
+
+- **Beyond the Fold:** This result represents the model's performance on the 20% test set that was "locked away" at the beginning of the project.
+
+- **The Spatial Paradox:** You will notice our Test AUC (0.97) is actually *higher* than our Validation AUC (0.927). In standard AI, this is rare. In forestry, this tells us two things:
+    1.  **Interpolation Power:** The high test score proves the model is excellent at "filling in gaps" within Washington, where it can leverage the patterns of nearby trees.
+    2.  **Extrapolation Power:** The lower (0.927) validation score is our "honest" baseline for new regions, where we stripped away those spatial clues.
+
+- **Classification Nuance:** The 91% Accuracy vs. 97% ROC suggests our model is a better "ranker" than a "classifier." It understands the *gradient* of forest probability better than the hard binary of "Tree vs. No Tree."
+
+- **Validation Success:** The fact that our "Honest" Spatial CV score (0.93) is so high confirms that the 0.97 on the test set isn't just a fluke of spatial memory—it's built on a solid foundation of learning spectral signatures.
+
+:::
+
+## Test vs. Resample Performance
+
+<br/>
+<br/>
+<br/>
+
+```{r}
+#| label: tbl-performance
+#| echo: false
+#| tbl-cap: "Comparision of model performance on resamples versus on the test set. Note that ROC increased."
+
+targets::tar_read(tbl_performance)
+```
+
+## Confusion Matrix
+
+
+```{r}
+#| label: fig-confusion
+#| fig-cap: "Confusion matrix showing the classification performance of the final model on the 20% held-out Washington test set."
+tar_read(fig_confusion_matrix)
+```
+
+::: {.notes}
+- **Anatomy of Error:** This matrix breaks down our 91.1% accuracy into specific types of successes and failures, helping us move beyond a single aggregate number.
+- **Symmetry of Mistakes:** We are looking for balance between the off-diagonal squares; a heavy skew toward one side would indicate the model has a systematic bias toward over-predicting or under-predicting forest cover.
+- **False Positives vs. Negatives:** In ecological terms, False Positives often represent "ghost forests" where the structure exists but the classification differs, while False Negatives are "missed forests" where the model failed to detect the canopy signal.
+- **Probability Sensitivity:** Since our ROC AUC is a high 0.97, most of these errors likely occur at the "decision boundary"—meaning the model was nearly correct (e.g., 48% probability) but the hard 50% cutoff forced an error.
+- **Production Readiness:** The high density in the True Positive and True Negative quadrants confirms that the model is robust enough for regional mapping, despite the inherent complexity of transition zones.
+:::
 
 
 ## References

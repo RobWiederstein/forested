@@ -6,6 +6,23 @@
   urldate = {2026-01-13}
 }
 
+@article{frescino_fiesta_2023,
+  title = {`{{FIESTA}}': A Forest Inventory Estimation and Analysis {{R}} Package},
+  shorttitle = {`{{FIESTA}}'},
+  author = {Frescino, Tracey S. and Moisen, Gretchen G. and Patterson, Paul L. and Toney, Chris and White, Grayson W.},
+  year = 2023,
+  month = jul,
+  journal = {Ecography},
+  volume = {2023},
+  number = {7},
+  pages = {e06428},
+  issn = {0906-7590, 1600-0587},
+  doi = {10.1111/ecog.06428},
+  urldate = {2026-01-14},
+  abstract = {Ecologists are increasingly relying on national forest inventories to address a wide variety of issues. The `FIESTA' R package (Forest Inventory ESTimation and Analysis) is a tool that enables customized investigations using the extensive sample-based inventory data collected across all lands in the US by the US Dept of Agriculture, Forest Service, Forest Inventory and Analysis (FIA) Program. To date, the complex nature of the FIA inventory constrains many users to conduct only limited analyses through existing tools with pre-specified geographic boundaries, timeframes, and auxiliary data under a single statistical estimation process. Yet, the rapid evolution of available remotely sensed data and statistical methods present the opportunity to conduct spatial and temporal analyses of forest attributes that are much more relevant to many pressing ecological, environmental, economic, and social issues in the US, The `FIESTA' package was developed to augment the current set of available tools by providing a flexible platform that accommodates evolving technologies and leading-edge estimation techniques. The package contains a collection of functions that can query FIA databases, summarize sample-based inventory data, extract and aggregate auxiliary spatial data, and generate estimates with associated variances. The `FIESTA' R package is available on CRAN (               https://cran.r-project.org/package=FIESTA               ).},
+  langid = {english}
+}
+
 @book{kuhn_tidy_2022,
   title = {Tidy {{Modeling}} with {{R}}},
   author = {Kuhn, Max},
@@ -15,8 +32,7 @@
   urldate = {2026-01-13},
   collaborator = {Silge, Julia},
   isbn = {978-1-4920-9648-1 978-1-4920-9644-3},
-  langid = {english},
-  note = {Description based on publisher supplied metadata and other sources}
+  langid = {english}
 }
 
 @article{omernik_ecoregions_1987,
@@ -32,6 +48,17 @@
   doi = {10.1111/j.1467-8306.1987.tb00149.x},
   urldate = {2026-01-13},
   langid = {english}
+}
+
+@misc{pebesma_spatial_2025,
+  title = {Spatial {{Data Science}}},
+  author = {Pebesma, Edzer and Bivand, Roger},
+  year = 2025,
+  month = jan,
+  urldate = {2026-01-17},
+  howpublished = {https://r-spatial.org/book/},
+  langid = {english},
+  file = {/home/rkw/Zotero/storage/ZNFK3H6Q/book.html}
 }
 
 @article{roberts_crossvalidation_2017,
@@ -50,4 +77,36 @@
   abstract = {Ecological data often show temporal, spatial, hierarchical (random effects), or phylogenetic structure. Modern statistical approaches are increasingly accounting for such dependencies. However, when performing cross-validation, these structures are regularly ignored, resulting in serious underestimation of predictive error. One cause for the poor performance of uncorrected (random) cross-validation, noted often by modellers, are dependence structures in the data that persist as dependence structures in model residuals, violating the assumption of independence. Even more concerning, because often overlooked, is that structured data also provides ample opportunity for overfitting with non-causal predictors. This problem can persist even if remedies such as autoregressive models, generalized least squares, or mixed models are used. Block cross-validation, where data are split strategically rather than randomly, can address these issues. However, the blocking strategy must be carefully considered. Blocking in space, time, random effects or phylogenetic distance, while accounting for dependencies in the data, may also unwittingly induce extrapolations by restricting the ranges or combinations of predictor variables available for model training, thus overestimating interpolation errors. On the other hand, deliberate blocking in predictor space may also improve error estimates when extrapolation is the modelling goal. Here, we review the ecological literature on non-random and blocked cross-validation approaches. We also provide a series of simulations and case studies, in which we show that, for all instances tested, block cross-validation is nearly universally more appropriate than random cross-validation if the goal is predicting to new data or predictor space, or for selecting causal predictors. We recommend that block cross-validation be used wherever dependence structures exist in a dataset, even if no correlation structure is visible in the fitted model residuals, or if the fitted models account for such correlations.},
   langid = {english},
   file = {/home/rkw/Zotero/storage/JFMJE6FR/Roberts et al. - 2017 - Cross‐validation strategies for data with temporal, spatial, hierarchical, or phylogenetic structure.pdf}
+}
+
+@article{white_method_2025,
+  title = {A Method for Empirically Assessing Small Area Estimators via Bootstrap-Weighted k-Nearest-Neighbor Artificial Populations, with Applications to Forest Inventory},
+  author = {White, Grayson W and Wieczorek, Jerzy A and Cody, Zachariah W and Tan, Emily X and Chistolini, Jacqueline O and McConville, Kelly S and Frescino, Tracey S and Moisen, Gretchen G},
+  editor = {Fassnacht, Fabian},
+  year = 2025,
+  month = nov,
+  journal = {Forestry: An International Journal of Forest Research},
+  pages = {cpaf071},
+  issn = {0015-752X, 1464-3626},
+  doi = {10.1093/forestry/cpaf071},
+  urldate = {2026-01-14},
+  abstract = {Abstract             National Forest Inventories monitor forest attributes across a variety of spatial and temporal scales in a given country. Increased interest in reporting and management at smaller scales has driven National Forest Inventories to investigate and adopt small area estimation (SAE) due to the promise of increased precision at these scales. However, comparing and evaluating SAE models for a given application is inherently difficult. Typically, many areas lack enough data to check unit-level modeling assumptions or to assess unit-level predictions empirically; and no ground truth is available for checking area-level estimates. Design-based simulation from artificial populations can help with each of these issues, but only if the artificial populations realistically represent the application at hand and are not built using assumptions that inherently favor one SAE model over another. In this paper, we borrow ideas from random hot deck, approximate Bayesian bootstrap, and \$k\$ nearest neighbor imputation methods to propose a \$k\$ nearest neighbor-based approximation to approximate Bayesian bootstrap, for generating an artificial population when rich unit-level auxiliary data are available. We introduce diagnostic checks on the process of building the artificial population, and demonstrate how to use it for design-based simulation studies to compare and evaluate SAE models, using real data from the Forest Inventory and Analysis program of the United States Department of Agriculture Forest Service (the National Forest Inventory of the United States).},
+  copyright = {https://creativecommons.org/licenses/by/4.0/},
+  langid = {english}
+}
+
+@article{white_small_2025,
+  title = {Small Area Estimation of Forest Biomass via a Two-Stage Model for Continuous Zero-Inflated Data},
+  author = {White, Grayson W. and Yamamoto, Josh K. and Elsyad, Dinan H. and Schmitt, Julian F. and Korsgaard, Niels H. and Hu, Jie Kate and Gaines, George C. and Frescino, Tracey S. and McConville, Kelly S.},
+  year = 2025,
+  month = jan,
+  journal = {Canadian Journal of Forest Research},
+  volume = {55},
+  pages = {1--19},
+  issn = {0045-5067, 1208-6037},
+  doi = {10.1139/cjfr-2024-0149},
+  urldate = {2026-01-14},
+  abstract = {Nationwide Forest Inventories (NFIs) collect data on and monitor the trends of forests across the globe. Users of NFI data are increasingly interested in monitoring forest attributes such as biomass at fine geographic and temporal scales, resulting in a need for assessment and development of small area estimation techniques in forest inventory. We implement a small area estimator and parametric bootstrap estimator that account for zero-inflation in biomass data via a two-stage model-based approach and compare the performance to a Horvitz--Thompson estimator, a post-stratified estimator, and to the unit- and area-level empirical best linear unbiased prediction (EBLUP) estimators. We conduct a simulation study in Nevada with data from the United States NFI, the Forest Inventory and Analysis Program, and remote sensing data products. Results show the zero-inflated estimator has the lowest relative bias and the smallest empirical root mean square error. Moreover, the 95\% confidence interval coverages of the zero-inflated estimator and the unit-level EBLUP are more accurate than the other two estimators. To further illustrate the practical utility, we employ a data application across the 2019 measurement year in Nevada. We introduce the R package, saeczi, which efficiently implements the zero-inflated estimator and its mean squared error estimator.},
+  langid = {english},
+  file = {/home/rkw/Zotero/storage/VSX6A8MF/White et al. - 2025 - Small area estimation of forest biomass via a two-stage model for continuous zero-inflated data.pdf}
 }

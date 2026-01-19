@@ -2,14 +2,15 @@ library(targets)
 library(tarchetypes)
 # library(forested) # Make sure this is installed
 
-# --- 1. Options ---
+# 1. Options ----
 tar_option_set(
   packages = c(
     "colorspace",
     "elevatr", 
     "forested", 
     "ggcorrplot", 
-    "ggrepel", 
+    "ggrepel",
+    "ggspatial",
     "gt", 
     "magrittr",
     "patchwork", 
@@ -26,13 +27,12 @@ tar_option_set(
     "tidyverse",
     "tigris",
     "xgboost",   # For XGBoost
-    "earth",
-    "vip"
+    "earth"
   ),
   format = "rds"
 )
 
-# --- 2. Functions ---
+# 2. Functions ----
 
 combine_forest <- function(wa_data, ga_data){
   dplyr::bind_rows(
@@ -66,23 +66,53 @@ style_audit_table <- function(data, title = NULL, subtitle = NULL) {
     )
 }
 
-draw_us_map <- function(data){
+draw_us_map <- function() {
+  
+  # 1. Fetch and filter for the Lower 48 (Exact code provided)
   us_map <- tigris::states(cb = TRUE, resolution = "20m", year = 2022, progress_bar = FALSE) %>%
-    rmapshaper::ms_simplify(keep = 0.1) %>%
-    tigris::shift_geometry()
+    dplyr::filter(!STUSPS %in% c("AK", "HI", "PR")) %>% 
+    rmapshaper::ms_simplify(keep = 0.2) %>%
+    rmapshaper::ms_filter_islands(min_area = 1e9) %>% 
+    tigris::shift_geometry() %>% 
+    dplyr::mutate(
+      # Create a specific label for the legend, or NA for grey states
+      highlight = case_when(
+        STUSPS == "WA" ~ "Washington",
+        STUSPS == "GA" ~ "Georgia",
+        TRUE ~ NA_character_
+      )
+    )
   
-  forest_us_sf <- data %>%
-    sf::st_as_sf(coords = c("lon", "lat"), crs = 4326) %>%
-    sf::st_transform(sf::st_crs(us_map)) %>%
-    tigris::shift_geometry()
+  # 2. Define Colors
+  state_colors <- c("Washington" = "#E16A86", "Georgia" = "#00AD9A")
   
+  # 3. Plot
   ggplot2::ggplot() +
+    # Layer 1: Base Map (All states in neutral grey)
     ggplot2::geom_sf(data = us_map, fill = "grey98", color = "grey50", size = 0.25) +
-    ggplot2::geom_sf(data = forest_us_sf, aes(color = state), alpha = 0.4, size = 0.6) +
-    ggplot2::theme_void() +
-    ggplot2::scale_color_manual(values = c("WA" = "#0072B2", "GA" = "#D55E00")) +
-    ggplot2::labs(title = "The 'Two Islands'", color = "Source State") +
-    ggplot2::theme(legend.position = "bottom")
+    
+    # Layer 2: Highlight Layer (Only WA and GA)
+    # We filter directly inside the data argument so we only plot these two
+    ggplot2::geom_sf(
+      data = dplyr::filter(us_map, !is.na(highlight)), 
+      ggplot2::aes(fill = highlight), 
+      color = "grey50", 
+      size = 0.25
+    ) +
+    
+    # Apply the colors manually
+    ggplot2::scale_fill_manual(values = state_colors, name = "Study Sites") +
+    
+    ggplot2::theme_bw() +
+    ggplot2::labs(title = "", x = NULL, y = NULL) +
+    
+    # Strict Theme Control
+    ggplot2::theme(
+      legend.position = "bottom",
+      panel.grid.major = ggplot2::element_blank(),
+      panel.grid.minor = ggplot2::element_blank(),
+      panel.background = ggplot2::element_rect(fill = "white", color = NA)
+    )
 }
 
 plot_regional_comparison <- function(data, boundaries) {
@@ -96,9 +126,8 @@ plot_regional_comparison <- function(data, boundaries) {
       ggplot2::geom_sf(data = dplyr::filter(forest_sf, state == state_name), 
                        aes(color = forested), alpha = 0.6) +
       ggplot2::scale_color_manual(values = c("Yes" = "#228B22", "No" = "#D2691E")) +
-      ggplot2::theme_minimal() + 
-      ggplot2::labs(title = state_name) +
-      ggplot2::theme(panel.grid = element_blank())
+      ggplot2::theme_light() + 
+      ggplot2::labs(title = state_name)
   }
   
   p_wa <- plot_state("WA") + ggplot2::theme(legend.position = "none")
@@ -125,11 +154,6 @@ get_epa_ecoregions <- function(url, dest_dir = "data/epa") {
 }
 
 process_ecoregions <- function(zip_path, target_states = c("Washington", "Georgia"), simplify_tol = 0.05) {
-  require(sf)
-  require(tidyverse)
-  require(tigris)
-  require(rmapshaper)
-  
   message("Processing shapefiles for: ", paste(target_states, collapse = ", "))
   
   # A. Fetch State Boundaries (The "Cookie Cutter")
@@ -172,10 +196,6 @@ process_ecoregions <- function(zip_path, target_states = c("Washington", "Georgi
 }
 
 plot_ecoregion_comparison <- function(eco_data){
-  require(ggplot2)
-  require(patchwork)
-  require(ggrepel)
-  require(sf)
   
   # Helper function for individual state plots
   plot_state <- function(state_name, title_abbr) {
@@ -225,12 +245,7 @@ plot_ecoregion_comparison <- function(eco_data){
       scale_fill_discrete_qualitative(palette = "Dark 3") +
       theme_light() +
       labs(title = title_abbr, x = NULL, y = NULL) +
-      theme(
-        legend.position = "none",
-        plot.title = element_text(hjust = 0, face = "bold", size = 16),
-        axis.text = element_text(color = "grey60", size = 8),
-        panel.grid.major = element_line(color = "grey90", linewidth = 0.2)
-      )
+      theme(legend.position = "none")
   }
   
   # Generate Subplots
@@ -293,13 +308,13 @@ identify_outliers <- function(data){
 fetch_study_area <- function(target_states) {
   tigris::states(cb = TRUE, resolution = "20m", progress_bar = FALSE) %>%
     dplyr::filter(NAME %in% target_states) %>%
-    rmapshaper::ms_simplify(keep = 0.1, keep_shapes = TRUE)
+    rmapshaper::ms_simplify(keep = 0.2, keep_shapes = TRUE)
 }
 
 fetch_state_boundary <- function(state){
   tigris::states(cb = TRUE, resolution = "20m", progress_bar = FALSE) %>%
     dplyr::filter(NAME == state) %>%
-    rmapshaper::ms_simplify(keep = 0.1, keep_shapes = TRUE)
+    rmapshaper::ms_simplify(keep = 0.2, keep_shapes = TRUE)
 }
 
 create_elevation_raster <- function(boundary_sf, path) {
@@ -588,6 +603,7 @@ plot_cv_strategies <- function(data) {
 }
 
 plot_spatial_cv_comparison <- function(res_random, res_block, res_cluster) {
+  
   # 1. Extract & Clean Data
   all_metrics <- bind_rows(
     res_random  %>% collect_metrics() %>% mutate(strategy = "Random CV"),
@@ -595,13 +611,16 @@ plot_spatial_cv_comparison <- function(res_random, res_block, res_cluster) {
     res_cluster %>% collect_metrics() %>% mutate(strategy = "Cluster CV")
   ) %>%
     filter(.metric == "roc_auc") %>%
-    separate(wflow_id, into = c("recipe", "model"), sep = "_") %>%
     mutate(
       recipe_label = case_when(
-        recipe == "base" ~ "No Coords",
-        recipe == "spatial" ~ "With Coords"
+        str_detect(wflow_id, "^base") ~ "Coords",
+        str_detect(wflow_id, "^non_spatial") ~ "No Coords",
+        str_detect(wflow_id, "^extensible") ~ "Extensible",
+        TRUE ~ "Unknown"
       ),
-      strategy = factor(strategy, levels = c("Random CV", "Block CV", "Cluster CV"))
+      model = str_remove(wflow_id, "(base_|non_spatial_|extensible_)"),
+      strategy = factor(strategy, levels = c("Random CV", "Block CV", "Cluster CV")),
+      recipe_label = factor(recipe_label, levels = c("Coords", "No Coords", "Extensible"))
     )
   
   # 2. Generate Plot
@@ -614,8 +633,6 @@ plot_spatial_cv_comparison <- function(res_random, res_block, res_cluster) {
     scale_y_continuous(labels = scales::number_format(accuracy = 0.01),
                        limits = c(.65, 1)) +
     labs(
-      #title = "Model Performance: The Effect of Spatial Validation",
-      #subtitle = "Comparing ROC AUC across Models, Recipes, and Validation Strategies",
       y = "ROC AUC Score",
       x = "Model Type",
       color = "Model"
@@ -624,17 +641,18 @@ plot_spatial_cv_comparison <- function(res_random, res_block, res_cluster) {
     theme(
       legend.position = "none",
       panel.grid.minor = element_blank(),
-      strip.text = element_text(face = "bold", size = 12)
+      strip.text = element_text(face = "bold", size = 10)
     )
 }
-
-plot_spatial_vip_comparison <- function(res_random, res_block, res_cluster) {
-
+plot_spatial_vip_comparison <- function(res_random, res_block, res_cluster, model_id = "base_rf") {
   
-  # Internal helper to extract VIP from the best fold of the spatial_rf model
+  # Internal helper to extract VIP from the best fold
   get_best_fold_vip <- function(wflow_obj, strategy_name) {
-    resample_results <- wflow_obj %>% extract_workflow_set_result("spatial_rf")
     
+    # 1. Extract results for the specific model ID (e.g., "base_rf")
+    resample_results <- wflow_obj %>% extract_workflow_set_result(model_id)
+    
+    # 2. Find the best fold
     best_fold_id <- resample_results %>%
       collect_metrics(summarize = FALSE) %>%
       filter(.metric == "roc_auc") %>%
@@ -642,10 +660,12 @@ plot_spatial_vip_comparison <- function(res_random, res_block, res_cluster) {
       slice(1) %>% 
       pull(id)
     
+    # 3. Get the split object for that fold
     best_split <- resample_results$splits[[which(resample_results$id == best_fold_id)]]
     
+    # 4. Refit and calculate Importance
     wflow_obj %>%
-      extract_workflow("spatial_rf") %>%
+      extract_workflow(model_id) %>%
       finalize_workflow(select_best(resample_results, metric = "roc_auc")) %>%
       fit(data = analysis(best_split)) %>% 
       extract_fit_parsnip() %>%
@@ -659,15 +679,14 @@ plot_spatial_vip_comparison <- function(res_random, res_block, res_cluster) {
     get_best_fold_vip(res_block,   "Block CV"),
     get_best_fold_vip(res_cluster, "Cluster CV")
   ) %>%
-    filter(Variable %in% c("lat", "lon", "lat_x_lon")) %>%
+    # Filter ONLY for Lat/Lon (The interaction term doesn't exist in your new recipe)
+    filter(Variable %in% c("lat", "lon")) %>%
     mutate(
       Variable = case_when(
-        Variable == "lon" ~ "Long",
-        Variable == "lat" ~ "Lat",
-        Variable == "lat_x_lon" ~ "Lat/Lon",
+        Variable == "lon" ~ "Longitude",
+        Variable == "lat" ~ "Latitude",
         TRUE ~ Variable
       ),
-      Variable = factor(Variable, levels = c("Long", "Lat", "Lat/Lon")),
       strategy = factor(strategy, levels = c("Cluster CV", "Block CV", "Random CV"))
     )
   
@@ -678,27 +697,25 @@ plot_spatial_vip_comparison <- function(res_random, res_block, res_cluster) {
     geom_point(aes(color = strategy), size = 5, show.legend = FALSE) +
     facet_grid(Variable ~ ., scales = "free_y", space = "free_y", switch = "y") +
     scale_color_discrete_qualitative(palette = "Dark 3") +
-    scale_x_continuous(limits = c(0, 105), expand = c(0, 0)) +
+    scale_x_continuous(expand = c(0, 0)) + # Removed fixed limit (105) to let it scale automatically
     labs(
+      title = paste("Spatial Overfitting Check:", model_id),
+      subtitle = "Does the model rely on coordinates?",
       x = "Importance Score (Impurity)",
       y = NULL
     ) +
     theme_classic(base_size = 14) +
     theme(
-      #panel.grid.major.y = element_blank(),
       panel.grid.minor = element_blank()
-      #panel.spacing = unit(2, "lines"),
-      #axis.text.y = element_text(color = "black"),
-      #strip.text.y.left = element_text(angle = 0, face = "bold", size = 12)
     )
 }
-
-plot_model_stability <- function(res_random, res_block, res_cluster) {
+#                                                      vvv ADD THIS vvv
+plot_model_stability <- function(res_random, res_block, res_cluster, model_id) {
   
   # Internal helper to extract per-fold metrics
   extract_fold_metrics <- function(wflow_obj, strategy_name) {
     wflow_obj %>%
-      extract_workflow_set_result("spatial_rf") %>%
+      extract_workflow_set_result(id = model_id) %>% # <--- Now this works
       collect_metrics(summarize = FALSE) %>% 
       filter(.metric == "roc_auc") %>%
       mutate(strategy = strategy_name)
@@ -720,17 +737,290 @@ plot_model_stability <- function(res_random, res_block, res_cluster) {
     scale_color_discrete_qualitative(palette = "Dark 3") +
     scale_y_continuous(limits = c(0.80, 1.0), breaks = seq(0.80, 1.0, 0.05)) +
     labs(
+      title = paste("Stability Analysis:", model_id), # <--- Helpful title
       x = NULL,
       y = "ROC AUC (per fold)",
       caption = ""
     ) +
     theme_classic(base_size = 14) +
     theme(
-      legend.position = "none",
-      axis.text.x = element_text(face = "bold")
+      legend.position = "none"
     )
 }
-# --- 3. The Pipeline ---
+plot_final_test_results <- function(final_fit_obj) {
+  final_metrics <- final_fit_obj %>% 
+    collect_metrics() %>% 
+    filter(.metric %in% c("roc_auc", "accuracy")) %>% 
+    mutate(
+      .metric = case_when(
+        .metric == "roc_auc" ~ "ROC AUC",
+        .metric == "accuracy" ~ "Accuracy",
+        TRUE ~ .metric
+      )
+    )
+  
+  ggplot(final_metrics, aes(x = .metric, y = .estimate, fill = .metric)) +
+    geom_col(width = 0.6, show.legend = FALSE) +
+    geom_text(aes(label = round(.estimate, 3)), vjust = -0.5, size = 5, fontface = "bold") +
+    scale_fill_manual(values = c("ROC AUC" = "#2c3e50", "Accuracy" = "#18bc9c")) +
+    scale_y_continuous(limits = c(0, 1.1), breaks = seq(0, 1, 0.2), expand = c(0, 0)) +
+    labs(
+      x = NULL,
+      y = "Performance Score",
+      caption = "Evaluation based on the 20% held-out Washington Test Set."
+    ) +
+    theme_classic(base_size = 14) +
+    theme(axis.text.x = element_text(face = "bold", size = 12))
+}
+
+plot_final_confusion_matrix <- function(final_fit_obj) {
+  # Extract the predictions from the last_fit object
+  preds <- final_fit_obj %>% collect_predictions()
+  
+  # Generate the confusion matrix
+  cm <- preds %>% 
+    conf_mat(truth = forested, estimate = .pred_class)
+  
+  # Convert to a tidy format for plotting
+  autoplot(cm, type = "heatmap") +
+    scale_fill_gradient(low = "#ebf5fb", high = "#2980b9") +
+    theme_minimal(base_size = 14) +
+    theme(
+      panel.grid = element_blank(),
+      axis.text = element_text(face = "bold"),
+      plot.title = element_text(face = "bold"),
+      legend.position = "none"
+    )
+}
+
+plot_fold_mechanics <- function(wa_sf, boundary_wa_sf) {
+  # 1. SETUP
+  set.seed(42)
+  
+  # Ensure unique_id exists to prevent the "object not found" error
+  if(!"unique_id" %in% names(wa_sf)) {
+    wa_sf <- wa_sf %>% mutate(unique_id = row_number())
+  }
+  
+  # 2. DEFINE CUSTOM DISTANCE
+  dist_env <- function(x) {
+    x %>% 
+      st_drop_geometry() %>% 
+      select(elevation, precip_annual, temp_annual_mean, roughness) %>%
+      scale() %>% 
+      dist()
+  }
+  
+  # 3. CREATE SPLITS
+  random_folds  <- vfold_cv(wa_sf, v = 5)
+  spatial_folds <- spatial_block_cv(wa_sf, v = 5)
+  cluster_folds <- spatial_clustering_cv(wa_sf, v = 5, cluster_function = "hclust", distance_function = dist_env)
+  
+  # 4. HELPER: EXTRACT STATUS
+  get_status <- function(split_obj) {
+    first_split <- split_obj$splits[[1]]
+    assessment_ids <- assessment(first_split) %>% pull(unique_id)
+    wa_sf %>%
+      mutate(status = if_else(unique_id %in% assessment_ids, "Assessment (Test)", "Analysis (Train)"))
+  }
+  
+  df_r <- get_status(random_folds)
+  df_s <- get_status(spatial_folds)
+  df_c <- get_status(cluster_folds)
+  
+  # 5. PLOTTER WITH BOUNDARY LAYER
+  plot_one <- function(df, title) {
+    ggplot() +
+      # Layer 1: The state boundary provides the spatial context
+      geom_sf(data = boundary_wa_sf, fill = "gray98", color = "gray85") +
+      # Layer 2: The actual data points
+      geom_sf(data = df, aes(color = status), size = 0.4, alpha = 0.7) +
+      scale_color_manual(values = c("Assessment (Test)" = "#E16A86", "Analysis (Train)" = "#606060")) +
+      ggtitle(title) +
+      theme_void() +
+      theme(
+        legend.position = "none", 
+        plot.title = element_text(hjust = 0.5, face = "bold", size = 10)
+      )
+  }
+  
+  # 6. COMBINE
+  (plot_one(df_r, "Random\n(Confetti)") + 
+      plot_one(df_s, "Spatial\n(Checkerboard)") + 
+      plot_one(df_c, "Env. Clustering\n(Ecoregions)")) + 
+    plot_layout(ncol = 3, guides = "collect") & 
+    theme(legend.position = 'bottom', legend.title = element_blank())
+}
+
+plot_classic_kfold_diagram <- function(){
+  library(tidyverse)
+  
+  # 1. Setup Parameters
+  N_obs <- 100  
+  K_folds <- 5  
+  
+  # 2. Create Mock Data and Assign Folds
+  set.seed(42) 
+  base_data <- tibble(
+    obs_id = 1:N_obs,
+    assigned_fold_group = sample(rep(1:K_folds, length.out = N_obs))
+  )
+  
+  # 3. Expand Data for Plotting (Cross-Join)
+  plot_data <- expand_grid(
+    obs_id = 1:N_obs,
+    iteration = 1:K_folds
+  ) %>%
+    left_join(base_data, by = "obs_id") %>%
+    # Define Status: If the iteration matches the assigned fold group, it's Test data.
+    mutate(
+      status = case_when(
+        iteration == assigned_fold_group ~ "Assessment (20%)",
+        TRUE ~ "Analysis (80%)"
+      ),
+      # Convert iteration to factor and reverse levels so Fold 1 is at the top of plot
+      iteration_fct = factor(iteration, levels = rev(1:K_folds))
+    )
+  
+  # 4. Define Colors
+  cv_colors <- c(
+    "Analysis (80%)" = "#A6CEE3",
+    "Assessment (20%)" = "#FDB462"
+  )
+  
+  # 5. Generate the Plot
+  ggplot(plot_data, aes(x = obs_id, y = iteration_fct, fill = status)) +
+    geom_tile(color = "white", linewidth = 0.2) +
+    scale_fill_manual(values = cv_colors, name = "Data Role") +
+    labs(
+      x = "Observations",
+      y = "Folds"
+    ) +
+    
+    # Theme adjustments
+    theme_minimal(base_size = 16) +
+    theme(
+      panel.grid = element_blank(),       
+      axis.text.x = element_blank(),      
+      axis.ticks.x = element_blank(),
+      legend.position = "bottom"
+    )
+}
+create_performance_table <- function(results_cluster, final_fit_results) {
+  require(dplyr)
+  require(gt)
+  require(tidymodels)
+  
+  # 1. Extract the WINNING Model Info (Name & Score)
+  best_model_info <- results_cluster %>% 
+    rank_results(rank_metric = "roc_auc", select_best = TRUE) %>% 
+    filter(.metric == "roc_auc") %>% 
+    slice(1) # Grab the #1 spot
+  
+  # Get the dynamic name and score
+  best_model_name <- best_model_info$wflow_id
+  cv_score <- best_model_info$mean
+  
+  # 2. Extract the Final Test Set Scores
+  test_scores <- final_fit_results %>% 
+    collect_metrics() %>% 
+    select(.metric, .estimate) %>% 
+    tidyr::pivot_wider(names_from = .metric, values_from = .estimate)
+  
+  # 3. Create the Combined Data Frame
+  summary_data <- tibble(
+    # FIXED: Uses the actual winner's name instead of hardcoded text
+    Model = best_model_name, 
+    `Validation AUC` = cv_score,
+    `Test AUC` = test_scores$roc_auc,
+    `Test Accuracy` = test_scores$accuracy
+  )
+  
+  # 4. Render with gt
+  summary_data %>% 
+    gt() %>% 
+    tab_header(
+      title = md("**Final Model Performance**"),
+      subtitle = paste("Winner:", best_model_name)
+    ) %>% 
+    fmt_number(
+      columns = where(is.numeric),
+      decimals = 3
+    ) %>% 
+    cols_align(
+      align = "center",
+      columns = where(is.numeric)
+    ) %>% 
+    tab_footnote(
+      footnote = "Mean ROC AUC across spatial cross-validation folds.",
+      locations = cells_column_labels(columns = `Validation AUC`)
+    ) %>% 
+    tab_footnote(
+      footnote = "Evaluated on the 20% independent Washington holdout set.",
+      locations = cells_column_labels(columns = contains("Test"))
+    ) %>% 
+    tab_options(
+      table.border.top.color = "white",
+      table.border.bottom.color = "black",
+      column_labels.font.weight = "bold"
+    )
+}
+
+plot_yeo_johnson <- function(data) {
+  # 1. Prepare Recipe & Extract Lambda
+  rec_yeo <- recipe(~ elevation, data = data) %>%
+    step_YeoJohnson(elevation) %>%
+    prep()
+  
+  lambda_val <- tidy(rec_yeo, number = 1) %>%
+    filter(terms == "elevation") %>%
+    pull(value) %>%
+    round(2)
+  
+  # 2. Create Plotting Data
+  plot_data <- data %>%
+    select(elevation) %>%
+    mutate(type = "Original") %>%
+    bind_rows(
+      bake(rec_yeo, new_data = data) %>%
+        mutate(type = "Transformed") %>%
+        rename(elevation_trans = elevation)
+    )
+  
+  # 3. Setup Colors
+  dark3_cols <- colorspace::qualitative_hcl(2, palette = "Dark 3")
+  
+  # 4. Plot A: Original
+  p1 <- ggplot(filter(plot_data, type == "Original"), aes(x = elevation)) +
+    geom_density(fill = dark3_cols[1], color = dark3_cols[1], alpha = 0.6, linewidth = 1) +
+    scale_x_continuous(labels = scales::label_comma(), expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
+    labs(x = "Elevation (m)", y = "Density") +
+    theme_minimal(base_size = 14) +
+    theme(
+      panel.grid.minor = element_blank(),
+      panel.border = element_rect(color = "black", fill = NA, linewidth = 0.5)
+    )
+  
+  # 5. Plot B: Transformed
+  p2 <- ggplot(filter(plot_data, type == "Transformed"), aes(x = elevation_trans)) +
+    geom_density(fill = dark3_cols[2], color = dark3_cols[2], alpha = 0.6, linewidth = 1) +
+    scale_x_continuous(labels = scales::label_comma(), expand = c(0, 0)) +
+    scale_y_continuous(expand = c(0, 0)) +
+    labs(x = paste0("Yeo-Johnson (Lambda: ", lambda_val, ")"), y = "Density") +
+    theme_minimal(base_size = 14) +
+    theme(
+      panel.grid.minor = element_blank(),
+      axis.title.y = element_blank(),
+      axis.text.y = element_blank(),
+      panel.border = element_rect(color = "black", fill = NA, linewidth = 0.5)
+    )
+  
+  # 6. Combine
+  p1 + p2
+}
+
+# 3. The Pipeline ----
 list(
   # constants 
   tar_target(n_folds, 10),
@@ -776,7 +1066,7 @@ list(
              format = "file"),
   
   # Maps
-  tar_target(map_us, draw_us_map(forested_us)),
+  tar_target(fig_us_map, draw_us_map()),
   tar_target(wa_ga_map, fetch_study_area(c("Washington", "Georgia"))),
   tar_target(map_wa_ga, plot_regional_comparison(forested_us, wa_ga_map)),
   tar_target(
@@ -794,6 +1084,13 @@ list(
     format = "file"
   ),
   tar_target(plot_cv_comparison, plot_cv_strategies(forested_wa)),
+  # fold mechanics
+  tar_target(
+    fig_fold_mechanics,
+    plot_fold_mechanics(wa_sf, boundary_wa_sf)
+  ),
+  # fold diagram
+  tar_target(fig_classic_cv, plot_classic_kfold_diagram()),
   # Analysis
   tar_target(data_summary, create_stats_summary(forested_wa)),
   tar_target(tbl_wa_summary, style_audit_table(data_summary, title = "WA Summary")),
@@ -824,32 +1121,52 @@ list(
   
   # Extract the Test Set (Locked away until the very end)
   tar_target(test_data, testing(splits)),
-  # 2. Recipes --------------------------------------------------------
-  
-  ## Recipe A: The "Base"
+  # 2. Recipes ----
+  ## A: Base (Includes Lat/Lon) ----
   tar_target(
     recipe_base,
-    recipe(forested ~ ., data = train_data) %>% 
-      update_role(geometry, lat, lon, new_role = "id") %>% 
-      step_zv(all_predictors()) %>% 
-      step_normalize(all_numeric_predictors()) %>% 
-      step_dummy(all_nominal_predictors())
+    recipe(forested ~ ., data = train_data) %>%
+      update_role(geometry, new_role = "id") %>%
+      step_novel(all_nominal_predictors()) %>%
+      step_dummy(all_nominal_predictors()) %>%
+      step_zv(all_predictors()) %>%
+      step_normalize(all_numeric_predictors())
   ),
   
-  # Recipe B: Spatial
+  ## B: Non-Spatial (Bio Only) ----
   tar_target(
-    recipe_spatial,
-    recipe(forested ~ ., data = train_data) %>% 
-      update_role(geometry, new_role = "id") %>% 
-      step_zv(all_predictors()) %>% 
-      step_normalize(all_numeric_predictors()) %>% 
-      step_dummy(all_nominal_predictors()) %>% 
-      step_interact(terms = ~ lat:lon)
+    recipe_non_spatial,
+    recipe(forested ~ ., data = train_data) %>%
+      update_role(geometry, lat, lon, new_role = "id") %>%
+      step_novel(all_nominal_predictors()) %>%
+      step_dummy(all_nominal_predictors()) %>%
+      step_zv(all_predictors()) %>%
+      step_normalize(all_numeric_predictors())
   ),
-  # --- 3. Engines (Models) -----------------------------------------------
-  # CRITICAL: All set to single-threaded to allow parallel folding.
   
-  # 1. Logistic Regression (The Baseline)
+  ## C: Extensible (Feature Engineered) ----
+  tar_target(
+    recipe_extensible,
+    recipe(forested ~ ., data = train_data) %>%
+      update_role(geometry, lat, lon, new_role = "id") %>%
+      step_rm(northness, county, year) %>%
+      step_ratio(precip_annual, denom = denom_vars(temp_annual_max)) %>%
+      step_mutate(
+        temp_range = temp_annual_max - temp_annual_min,
+        vpd_range = vapor_max - vapor_min
+      ) %>%
+      step_YeoJohnson(elevation) %>%
+      step_novel(all_nominal_predictors()) %>%
+      step_dummy(all_nominal_predictors()) %>%
+      step_zv(all_predictors()) %>%
+      step_normalize(all_numeric_predictors())
+  ),
+  tar_target(
+    plot_yeo,
+    plot_yeo_johnson(forested_wa)
+  ),
+  # 3. Engines ----
+  ## Logistic Regression ----
   tar_target(
     spec_logistic,
     logistic_reg() %>% 
@@ -857,8 +1174,7 @@ list(
       set_mode("classification")
   ),
   
-  # 2. MARS (Multivariate Adaptive Regression Splines)
-  # A smooth, fast alternative that handles interactions automatically.
+  ## MARS ----
   tar_target(
     spec_mars,
     mars(num_terms = 10, prod_degree = 2) %>% 
@@ -866,8 +1182,7 @@ list(
       set_mode("classification")
   ),
   
-  # 3. Random Forest (The Standard)
-  # using 'ranger' which is faster than the default 'randomForest'
+  ## Random Forest ----
   tar_target(
     spec_rf,
     rand_forest(trees = 1000, min_n = 10) %>% 
@@ -877,7 +1192,7 @@ list(
       set_mode("classification")
   ),
   
-  # 4. XGBoost (The Powerhouse)
+  ## XGBoost ----
   tar_target(
     spec_xgb,
     boost_tree(trees = 1000, tree_depth = 6, learn_rate = 0.01) %>% 
@@ -885,12 +1200,14 @@ list(
                  nthread = 1) %>%         # <--- Server Safety Lock
       set_mode("classification")
   ),
-  # --- 4. The Workflow Set -----------------------------------------------
+  # 4. The Workflow Set ----
   # Crosses every recipe with every model (2 x 4 = 8 workflows)
   tar_target(
     model_set,
     workflow_set(
-      preproc = list(base = recipe_base, spatial = recipe_spatial),
+      preproc = list(base = recipe_base, 
+                     non_spatial = recipe_non_spatial,
+                     extensible = recipe_extensible),
       models = list(
         log = spec_logistic, 
         rf = spec_rf, 
@@ -900,28 +1217,28 @@ list(
       cross = TRUE
     )
   ),
-  # --- 5. Resampling Strategies ------------------------------------------
+  # 5. Resampling Strategies -----
   
-  # A. Random Folds
+  ## A. Random Folds ----
   tar_target(
     folds_random,
     vfold_cv(train_data, v = n_folds, strata = forested)
   ),
   
-  # B. Spatial Blocks
+  ## B. Spatial Blocks ----
   tar_target(
     folds_block,
     spatial_block_cv(train_data, v = n_folds) 
   ),
   
-  # C. Spatial Clustering
+  ## C. Spatial Clustering ----
   tar_target(
     folds_cluster,
     spatial_clustering_cv(train_data, v = n_folds) 
   ),
-  # --- 6. The Execution (Fit Models) -------------------------------------
+  # 6. Fit Models -----
   
-  # Branch 1: Random CV
+  ## Branch 1: Random CV ----
   tar_target(
     results_random,
     workflow_map(
@@ -933,7 +1250,7 @@ list(
     )
   ),
   
-  # Branch 2: Block CV
+  ## Branch 2: Block CV ----
   tar_target(
     results_block,
     workflow_map(
@@ -945,7 +1262,7 @@ list(
     )
   ),
   
-  # Branch 3: Cluster CV
+  ## Branch 3: Cluster CV ----
   tar_target(
     results_cluster,
     workflow_map(
@@ -956,18 +1273,54 @@ list(
       verbose = TRUE
     )
   ),
+  # 7. Results ----
   tar_target(
     fig_cv_comparison,
     plot_spatial_cv_comparison(results_random, results_block, results_cluster)
   ),
   tar_target(
-    fig_spatial_vip,
-    plot_spatial_vip_comparison(results_random, results_block, results_cluster)
+    fig_model_stability,
+    plot_model_stability(results_random, results_block, results_cluster, best_model_id)
+  ),
+  # 8. Select and Tune the Best Model ----
+  tar_target(
+    best_model_id,
+    results_cluster %>% 
+      rank_results(rank_metric = "roc_auc", select_best = TRUE) %>% 
+      slice(1) %>% 
+      pull(wflow_id)
   ),
   tar_target(
-    fig_model_stability,
-    plot_model_stability(results_random, results_block, results_cluster)
+    tbl_model_performance,
+    results_cluster %>% 
+      rank_results(rank_metric = "roc_auc", select_best = TRUE) %>% 
+      filter(.metric == "roc_auc")
   ),
-  # Report
+  
+  # 9. Final Fit ----
+  tar_target(
+    final_fit_results,
+    last_fit(
+      extract_workflow(model_set, best_model_id),
+      split = splits, # Your original 80/20 split
+      metrics = metric_set(roc_auc, accuracy)
+    )
+  ),
+  
+  # 10. Test Set Performance Plot ----
+  tar_target(
+    fig_final_performance,
+    plot_final_test_results(final_fit_results) # Use the specific plotting function
+  ),
+  tar_target(
+    tbl_performance,
+    create_performance_table(results_cluster, final_fit_results)
+  ),
+  # 11. Confusion Matrix ----
+  tar_target(
+    fig_confusion_matrix,
+    plot_final_confusion_matrix(final_fit_results)
+  ),
+  # Report----
   tar_quarto(report, "index.qmd", quiet = FALSE)
 )
