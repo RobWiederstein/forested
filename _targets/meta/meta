@@ -73,9 +73,11 @@ fig_cv_comparison|stem|173c6d45e4859fbb|ef746d284f476b2a|1003f723f7f2107b|-25870
 tbl_performance|stem|173e515a235654d2|48d51d2385b59fcb|1e583424ef726a38|-1551511671||t20472.0679533132s|s118007447b|118007447|rds|local|vector|||0.268||
 plt_vip|stem|eb636d81a2f2dd47|b1335ae312db100e|c52b4039ec2aa5f4|-623821603||t20472.7575971824s|s3181098b|3181098|rds|local|vector|||1.773||
 plot_yeo|stem|a92026770af3585d|f21cc60d6038c7e4|f42833516273f7d8|2098853526||t20472.823681997s|s1329446b|1329446|rds|local|vector|||0.12||
-report|stem|6e45b2e70cc6c91a|8690dbe87c8c916a|9b00011ae35a24a3|787668912|index_files*index.html*index.qmd|t20472.830332324s|s23889994b|23889994|file|local|vector|||36.58||
+map_wa_outliers|stem|85c66b937e723a86|2f01fcaa6977bdc3|aacc5e44e7ef18c9|-1030335457|figs/wa_outliers.png|t20472.8526305762s|s1116056b|1116056|file|local|vector|||5.85|Using one column matrices in `filter()` was deprecated in dplyr 1.1.0. ℹ Please use one dimensional logical vectors instead.. st_point_on_surface may not give correct results for longitude/latitude data|
+test_predictions|stem|83b82eba8398769f|29c82d59350d064a|1f13c3c63e6c3701|-1403965390||t20472.8637173946s|s68585b|68585|rds|local|vector|||0.043||
+map_wa_errors|stem|d2a7616d0642915a|c504918f1e968f60|f6388663d4e48042|798729782|figs/wa_errors.png|t20472.8794882587s|s1161683b|1161683|file|local|vector|||5.239||
 plot_regional_comparison|function|a7308122330f93ae
-.Random.seed|object|9197738386cfc6d6
+.Random.seed|object|6c3b1824593c3602
 create_performance_table|function|16b867dde5ffaf4c
 plot_yeo_johnson|function|a70d902df1b22d84
 plot_final_confusion_matrix|function|416ee809c03b13ce
@@ -95,6 +97,7 @@ plot_classic_kfold_diagram|function|344589a34cdd751e
 plot_model_stability|function|f776d3c5f94a7003
 plot_spatial_vip_comparison|function|5fa1dd656c8a014b
 create_stats_summary|function|a4f84db37b415ee6
+save_error_map_png|function|e99ef1b73329a6e6
 process_ecoregions|function|586fd3cc8ab17520
 plot_spatial_cv_comparison|function|22488e944c8c810b
 plot_correlations|function|43907d01dbc25e12
@@ -103,4 +106,4 @@ plot_final_test_results|function|77da897ab310272a
 combine_forest|function|d707f456a058f32f
 plot_wa_pca|function|11e48cc6dfd51624
 fetch_state_boundary|function|4b4b35294bd5418f
-map_wa_outliers|stem|85c66b937e723a86|2f01fcaa6977bdc3|aacc5e44e7ef18c9|-1030335457|figs/wa_outliers.png|t20472.8526305762s|s1116056b|1116056|file|local|vector|||5.85|Using one column matrices in `filter()` was deprecated in dplyr 1.1.0. ℹ Please use one dimensional logical vectors instead.. st_point_on_surface may not give correct results for longitude/latitude data|
+report|stem|e4589f09941451f9|8690dbe87c8c916a|9b00011ae35a24a3|787668912|index_files*index.html*index.qmd|t20472.8824223346s|s23896675b|23896675|file|local|vector|||36.257||

@@ -1068,6 +1068,74 @@ plot_yeo_johnson <- function(data) {
   p1 + p2
 }
 
+save_error_map_png <- function(data, boundary_sf, raster_path, output_path) {
+  # 1. Load & Process Hillshade (Standard Setup)
+  elev_terra <- terra::rast(raster_path)
+  slope  <- terra::terrain(elev_terra, "slope", unit = "radians")
+  aspect <- terra::terrain(elev_terra, "aspect", unit = "radians")
+  hill_terra <- terra::shade(slope, aspect, angle = 45, direction = 315)
+  
+  # 2. Prep Vectors & Calculate Errors
+  wa_boundary_sf <- sf::st_transform(boundary_sf, 4326)
+  
+  # Filter to ONLY the mistakes and calculate how "wrong" they were
+  error_sf <- data %>%
+    # Keep only rows where the Hard Class Prediction was wrong
+    dplyr::filter(.pred_class != forested) %>%
+    # Calculate Magnitude: How far was the probability from the truth?
+    # If Truth is Yes (1) and Pred is 0.1, Error is 0.9
+    # If Truth is No (0) and Pred is 0.9, Error is 0.9
+    dplyr::mutate(
+      truth_num = ifelse(forested == "Yes", 1, 0),
+      error_magnitude = abs(truth_num - .pred_Yes)
+    ) %>%
+    sf::st_as_sf(coords = c("lon", "lat"), crs = 4326) %>%
+    sf::st_filter(wa_boundary_sf)
+  
+  # 3. Plot
+  plt <- ggplot2::ggplot() +
+    # --- Background Layers (Same as before) ---
+    tidyterra::geom_spatraster(data = elev_terra) + 
+    tidyterra::scale_fill_hypso_c(palette = "usgs-gswa2", name = "Elevation", na.value = "transparent") +
+    tidyterra::geom_spatraster(data = hill_terra, aes(alpha = after_stat(value)), fill = "black", show.legend = FALSE) +
+    ggplot2::scale_alpha(range = c(0.6, 0), guide = "none", na.value = 0) +
+    ggplot2::geom_sf(data = wa_boundary_sf, fill = NA, color = "black", linewidth = 0.5) +
+    
+    # --- The Error Layer ---
+    ggplot2::geom_sf(
+      data = error_sf, 
+      aes(color = error_magnitude), 
+      size = 3,       # Make them slightly larger to see the color
+      alpha = 0.9
+    ) +
+    ggplot2::scale_color_viridis_c(
+      option = "plasma",
+      name = "Error\nConfidence",
+      limits = c(0.5, 1.0),
+      direction = -1 # Reverses it so 1.0 is dark/intense and 0.5 is bright
+    ) +
+    
+    # --- Theme ---
+    ggplot2::theme_minimal() +
+    ggplot2::labs(
+      x = "Longitude", 
+      y = "Latitude"
+    ) +
+    ggplot2::theme(
+      text = ggplot2::element_text(size = 14, color = "black"),
+      plot.background = ggplot2::element_rect(fill = "transparent", color = NA),
+      panel.background = ggplot2::element_rect(fill = "transparent", color = NA),
+      panel.grid.major = ggplot2::element_line(color = "gray70", linetype = "dashed", linewidth = 0.3),
+      panel.grid.minor = ggplot2::element_blank(),
+      panel.border = ggplot2::element_rect(color = "black", fill = NA, linewidth = 1),
+      axis.text = ggplot2::element_text(color = "black"),
+      axis.title = ggplot2::element_text(color = "black", face = "bold")
+    )
+  
+  ggplot2::ggsave(output_path, plot = plt, width = 10, height = 6, bg = "transparent")
+  return(output_path)
+}
+
 # 3. The Pipeline ----
 list(
   # constants 
@@ -1368,6 +1436,24 @@ list(
   tar_target(
     fig_confusion_matrix,
     plot_final_confusion_matrix(final_fit_results)
+  ),
+  tar_target(
+    test_predictions,
+    collect_predictions(final_fit_results) %>%
+      dplyr::bind_cols(
+        rsample::testing(splits) %>% 
+          dplyr::select(lat, lon)
+      )
+  ),
+  tar_target(
+    map_wa_errors,
+    save_error_map_png(
+      data = test_predictions,  # <--- Use the extracted data here
+      boundary_sf = boundary_wa_sf,
+      raster_path = wa_elev_file,
+      output_path = "figs/wa_errors.png"
+    ),
+    format = "file"
   ),
   # Report----
   tar_quarto(report, "index.qmd", quiet = FALSE)

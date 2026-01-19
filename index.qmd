@@ -669,8 +669,30 @@ tar_read(fig_confusion_matrix)
 - **Production Readiness:** The high density in the True Positive and True Negative quadrants confirms that the model is robust enough for regional mapping, despite the inherent complexity of transition zones.
 :::
 
+## Spatial Error Analysis
 
-## References
+```{r}
+#| label: fig-map-wa-errors
+#| out-width: "100%"
+#| fig-cap: "<b>Map showing Type I and II errors from model.</b> Points are shaded from purple to bright yellow based upon the absolute error of the prediction probability. Note the lack of errors in the Columbia Basin."
+
+knitr::include_graphics("figs/wa_errors.png")
+```
+
+::: {.notes} 
+
+- **The "Hallucinations":** We are looking at the ~130 mistakes the model made on the test set.
+
+- **Confidence vs. Confusion:** The Red points are where the model was "confidently wrong" (high error magnitude). These aren't just close calls; the model was >90% sure based on the physics features (like elevation/aridity) but missed the biological reality.
+
+- **Geography of Error:** Notice the clustering. The errors aren't random; they hug the alpine transition zones and the rugged coastline, suggesting the model struggles most at the "biophysical edges" where the rules of the forest change rapidly. 
+:::
+
+# Spatial Transferability
+
+# Lessons Learned
+
+# References
 
 ::: {#refs}
 :::
