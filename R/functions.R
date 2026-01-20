@@ -22,6 +22,23 @@ combine_forest <- function(wa_data, ga_data){
     .id = "state"
   )
 }
+#' Create Statistical Summary of Forest Data
+#'
+#' Generates descriptive statistics for numeric variables in the dataset,
+#' excluding spatial coordinates (lat/lon) and year. It sorts the results 
+#' by kurtosis to highlight non-normal distributions.
+#'
+#' @param data A data frame or sf object containing the forest data.
+#'
+#' @return A data frame with descriptive statistics (mean, sd, min, max, etc.),
+#'   sorted by descending absolute kurtosis.
+#'
+#' @importFrom dplyr select arrange desc any_of where
+#' @importFrom sf st_drop_geometry
+#' @importFrom psych describe
+#' @importFrom tibble rownames_to_column
+#'
+#' @export
 create_stats_summary <- function(data) {
   data %>%
     sf::st_drop_geometry() %>%
