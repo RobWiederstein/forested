@@ -1,0 +1,20 @@
+Package: forestedAnalysis
+Title: Spatial Cross-Validation and AOA Analysis of Forest Cover
+Version: 0.0.0.9000
+Authors@R: 
+    person("Rob", "Wiederstein", , "khuon68@gmail.com", role = c("aut", "cre"))
+Description: A research compendium analyzing forest cover data in Washington and Georgia. 
+    It evaluates the Area of Applicability (AOA) and demonstrates model failure 
+    during spatial extrapolation.
+License: MIT
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.3
+Depends: 
+    tidymodels,
+    tidyverse
+Imports: 
+    forested,
+    sf,
+    targets,
+    terra
