@@ -15,6 +15,12 @@ Depends:
     tidyverse
 Imports: 
     forested,
+    ggplot2,
+    ggrepel,
+    knitr,
+    patchwork,
+    quarto,
+    rmarkdown,
     sf,
     targets,
     terra

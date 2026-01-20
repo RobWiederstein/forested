@@ -1,3 +1,59 @@
+#' Standardized Spatial Theme
+#' @description High-visibility map theme for presentations.
+#' @importFrom ggplot2 theme_minimal theme element_line element_blank element_text element_rect margin unit
+#' @export
+#' @examples
+#' \dontrun{
+#' # How to apply the theme to a basic sf plot:
+#' library(ggplot2)
+#' library(sf)
+#' nc <- st_read(system.file("shape/nc.shp", package="sf"))
+#' ggplot(nc) + 
+#'   geom_sf() + 
+#'   theme_forestry_spatial()
+#' }
+theme_forestry_spatial <- function() {
+  ggplot2::theme_minimal() + # Wilke prefers minimal/clean bases
+    ggplot2::theme(
+      # Minimalist grid lines (Graticules)
+      panel.grid.major = ggplot2::element_line(color = "grey90", linewidth = 0.2),
+      panel.grid.minor = ggplot2::element_blank(),
+      
+      # Larger font sizes for presentation (Revealjs)
+      plot.title = ggplot2::element_text(face = "bold", size = 20, color = "#2c3e50"),
+      axis.text = ggplot2::element_text(size = 10, color = "#5d6d7e"),
+      
+      # Wilke Principle: Legend should be unobtrusive but legible
+      legend.position = "right",
+      legend.title = ggplot2::element_text(size = 16, face = "bold"),
+      legend.text = ggplot2::element_text(size = 14),
+      
+      # Clean borders to frame the space
+      panel.border = ggplot2::element_rect(color = "grey80", fill = NA, linewidth = 0.5),
+      plot.margin = ggplot2::margin(15, 15, 15, 15)
+    )
+}
+#' Simplified Theme Diagnostic
+#' @description Uses built-in NC data to verify theme_forestry_spatial.
+#' @importFrom sf st_read st_crs
+#' @importFrom ggplot2 ggplot geom_sf labs coord_sf scale_x_continuous scale_y_continuous
+#' @export
+plot_theme_diagnostic <- function() {
+  # Pull NC data included with the sf package
+  nc <- sf::st_read(system.file("shape/nc.shp", package = "sf"), quiet = TRUE)
+  
+  # Render with your spatial theme
+  ggplot2::ggplot(nc) +
+    ggplot2::geom_sf(fill = "#27ae60", alpha = 0.3, color = "#2c3e50") +
+    # Force WGS84 graticules (Decimal Degrees)
+    ggplot2::coord_sf(datum = sf::st_crs(4326)) +
+    theme_forestry_spatial() +
+    ggplot2::labs(
+      title = "Theme Diagnostic: North Carolina",
+      subtitle = "Testing 24pt Title and 14pt Graticule Labels"
+    )
+}
+
 #' Combine Washington and Georgia Forest Data
 #'
 #' Merges the Washington and Georgia datasets into a single data frame, adding a 
@@ -1330,4 +1386,178 @@ plot_ga_error_map <- function(pred_data, boundaries) {
       panel.background = ggplot2::element_rect(fill = "transparent", color = NA)
     )
 }
+#' Get Major Peaks for Plotting
+#'
+#' Internal helper to return peak locations for WA and GA.
+#' 
+#' @param state_name String. Either "Washington" or "Georgia".
+#' @return An sf object containing peak names and locations.
+#' 
+#' @importFrom tibble tibble
+#' @importFrom sf st_as_sf
+#' @noRd
+get_state_peaks <- function(state_name) {
+  if (state_name == "Washington") {
+    tibble::tibble(
+      peak = c("Mt. Rainier", "Mt. Adams", "Mt. Baker", "Glacier Peak", "Mt. St. Helens", "Mt. Olympus"),
+      lat  = c(46.8523, 46.2024, 48.7767, 48.1125, 46.1914, 47.8013),
+      lon  = c(-121.7603, -121.4909, -121.8132, -121.1139, -122.1956, -123.7111)
+    ) %>% sf::st_as_sf(coords = c("lon", "lat"), crs = 4326)
+  } else if (state_name == "Georgia") {
+    tibble::tibble(
+      peak = c("Brasstown Bald", "Rabun Bald", "Blood Mtn"),
+      lat  = c(34.8743, 34.9660, 34.7398),
+      lon  = c(-83.8111, -83.2996, -83.9367)
+    ) %>% sf::st_as_sf(coords = c("lon", "lat"), crs = 4326)
+  } else { NULL }
+}
 
+#' Create Single State Topo Plot
+#' 
+#' Generates a ggplot object for a single state's topography.
+#' 
+#' @param data Dataframe containing state data.
+#' @param boundary_sf sf object for the state boundary.
+#' @param raster_path Path to the elevation .tif file.
+#' @param state_name String name of the state.
+#' 
+#' @importFrom terra rast terrain shade
+#' @importFrom sf st_transform
+#' @importFrom tidyterra geom_spatraster scale_fill_hypso_c
+#' @importFrom ggplot2 ggplot geom_sf aes after_stat scale_alpha theme_minimal ggtitle labs theme element_text element_rect element_line element_blank
+#' @importFrom ggrepel geom_label_repel
+#' 
+#' @export
+plot_state_topo <- function(data, boundary_sf, raster_path, state_name) {
+  
+  # 1. Load & Process Raster
+  elev_terra <- terra::rast(raster_path)
+  slope  <- terra::terrain(elev_terra, "slope", unit = "radians")
+  aspect <- terra::terrain(elev_terra, "aspect", unit = "radians")
+  hill_terra <- terra::shade(slope, aspect, angle = 45, direction = 315)
+  
+  # 2. Prep Vectors
+  boundary_sf <- sf::st_transform(boundary_sf, 4326)
+  peaks_sf <- get_state_peaks(state_name)
+  
+  # 3. Plot
+  ggplot2::ggplot() +
+    tidyterra::geom_spatraster(data = elev_terra) + 
+    tidyterra::scale_fill_hypso_c(palette = "usgs-gswa2", name = "Elevation", na.value = "transparent") +
+    tidyterra::geom_spatraster(
+      data = hill_terra, 
+      ggplot2::aes(alpha = ggplot2::after_stat(value)), 
+      fill = "black", 
+      show.legend = FALSE
+    ) +
+    ggplot2::scale_alpha(range = c(0.6, 0), guide = "none", na.value = 0) +
+    ggplot2::geom_sf(data = boundary_sf, fill = NA, color = "black", linewidth = 0.5) +
+    {if(!is.null(peaks_sf)) ggrepel::geom_label_repel(
+      data = peaks_sf, ggplot2::aes(label = peak, geometry = geometry),
+      stat = "sf_coordinates", size = 4, fontface = "bold", box.padding = 0.5, min.segment.length = 0
+    )} +
+    ggplot2::theme_minimal() +
+    ggplot2::ggtitle(state_name) +
+    ggplot2::labs(x = NULL, y = NULL) + 
+    ggplot2::theme(
+      text = ggplot2::element_text(size = 12, color = "black"),
+      plot.title = ggplot2::element_text(size = 16, face = "bold", hjust = 0.5),
+      legend.position = "bottom",
+      plot.background = ggplot2::element_rect(fill = "transparent", color = NA),
+      panel.background = ggplot2::element_rect(fill = "transparent", color = NA),
+      panel.grid.major = ggplot2::element_line(color = "gray70", linetype = "dashed", linewidth = 0.3),
+      panel.border = ggplot2::element_rect(color = "black", fill = NA, linewidth = 1)
+    )
+}
+
+#' Save Combined Side-by-Side Topo Map
+#' 
+#' @param wa_data,ga_data Input data for WA and GA.
+#' @param wa_boundary,ga_boundary Boundary sf objects.
+#' @param wa_raster_path,ga_raster_path Paths to elevation rasters.
+#' @param output_path File path for the saved PNG.
+#' 
+#' @importFrom patchwork wrap_plots plot_layout
+#' @importFrom ggplot2 ggsave theme
+#' 
+#' @export
+save_combined_topo <- function(wa_data, ga_data, wa_boundary, ga_boundary, 
+                               wa_raster_path, ga_raster_path, output_path) {
+  
+  p_wa <- plot_state_topo(wa_data, wa_boundary, wa_raster_path, "Washington")
+  p_ga <- plot_state_topo(ga_data, ga_boundary, ga_raster_path, "Georgia")
+  
+  combined_plot <- patchwork::wrap_plots(p_wa, p_ga, ncol = 2) +
+    patchwork::plot_layout(guides = "collect") &
+    ggplot2::theme(legend.position = "bottom")
+  
+  ggplot2::ggsave(output_path, plot = combined_plot, width = 14, height = 7, bg = "transparent")
+  return(output_path)
+}
+
+#' Plot Spatial Autocorrelation Exploration
+#'
+#' @description Generates a Moran Scatterplot to visualize spatial 
+#' autocorrelation in elevation data using a 5km neighborhood.
+#'
+#' @param wa_data A dataframe or tibble containing elevation, lat, and lon columns.
+#'
+#' @return A ggplot object showing standardized elevation vs. spatially lagged elevation.
+#'
+#' @importFrom sf st_as_sf st_transform st_coordinates st_drop_geometry
+#' @importFrom spdep dnearneigh nb2listw lag.listw card
+#' @importFrom ggplot2 ggplot aes geom_point geom_smooth geom_hline geom_vline labs theme_minimal
+#' @importFrom dplyr mutate
+#'
+#' @export
+plot_spatial_exploration <- function(wa_data) {
+  
+  # 1. Convert to sf and project to meters (Washington State Plane North)
+  # This ensures the 5000 distance in dnearneigh is 5,000 meters.
+  wa_sf <- wa_data |>
+    sf::st_as_sf(coords = c("lon", "lat"), crs = 4326) |>
+    sf::st_transform(2285) 
+  
+  # 2. Extract coordinates and build weights (5km radius)
+  coords <- sf::st_coordinates(wa_sf)
+  nb <- spdep::dnearneigh(coords, 0, 5000)
+  
+  # Remove points with zero neighbors to prevent divide-by-zero errors
+  ids_with_nb <- which(spdep::card(nb) > 0)
+  nb <- subset(nb, spdep::card(nb) > 0)
+  wa_sf <- wa_sf[ids_with_nb, ]
+  
+  # Row-standardized weights matrix
+  lw <- spdep::nb2listw(nb, style = "W", zero.policy = TRUE)
+  
+  # 3. Prep data for plotting
+  plot_df <- wa_sf |>
+    sf::st_drop_geometry() |>
+    dplyr::mutate(
+      # Scale elevation to get z-scores
+      elev_scaled = as.vector(scale(elevation)),
+      # Calculate the spatial lag (average elevation of neighbors)
+      elev_lag = spdep::lag.listw(lw, elev_scaled, zero.policy = TRUE)
+    )
+  
+  # 4. Build Plot Object
+  p <- ggplot2::ggplot(plot_df, ggplot2::aes(x = elev_scaled, y = elev_lag)) +
+    ggplot2::geom_point(alpha = 0.2, color = "#2c3e50") +
+    ggplot2::geom_smooth(
+      method = "lm", 
+      color = "#e74c3c", 
+      linetype = "dashed", 
+      formula = y ~ x
+    ) +
+    ggplot2::geom_hline(yintercept = 0, alpha = 0.3) +
+    ggplot2::geom_vline(xintercept = 0, alpha = 0.3) +
+    ggplot2::labs(
+      title = "Spatial Autocorrelation: Moran Scatterplot",
+      subtitle = "Washington Elevation (5km neighborhood)",
+      x = "Standardized Elevation (Z-score)",
+      y = "Spatially Lagged Elevation (Neighbors)"
+    ) +
+    ggplot2::theme_minimal()
+  
+  return(p)
+}
