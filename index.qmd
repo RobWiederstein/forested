@@ -93,22 +93,6 @@ library(gt)
 :::
 
 
-## The Goal of Prediction {text-align="center"}
-
-<br/>
-<br/>
-
-> "The fundamental goal of a model is not to describe the data we have, but to predict the data we don't."
->
-> — Max Kuhn & Kjell Johnson, *Applied Predictive Modeling*
-
-::: {.notes}
-
-- This quote from Kuhn and Johnson is the foundation of our entire project.
-- If our model doesn't generalize to the "second island" (Georgia), it has failed its fundamental goal.
-
-:::
-
 ## Forest Locations
 
 ```{r}
@@ -690,7 +674,132 @@ knitr::include_graphics("figs/wa_errors.png")
 
 # Spatial Transferability
 
-# Lessons Learned
+## The Goal of Prediction {text-align="center"}
+
+<br/>
+<br/>
+
+> "The fundamental goal of a model is not to describe the data we have, but to predict the data we don't."
+>
+> — Max Kuhn & Kjell Johnson, *Applied Predictive Modeling*
+
+::: {.notes}
+
+- This quote from Kuhn and Johnson is the foundation of our entire project.
+- If our model doesn't generalize to the "second island" (Georgia), it has failed its fundamental goal.
+
+:::
+
+
+
+## Assessing Domain Applicability
+
+```{r}
+#| label: fig-aoa-georgia
+#| echo: false
+#| out-width: "100%"
+#| fig-cap: "<b>Area of Applicability (AOA) Analysis.</b> The Dissimilarity Index (DI) measures how different the Georgia environment is from the Washington training data. Brighter colors (Yellow) indicate high dissimilarity. Note the similarity to the Level III Ecoregion plot @fig-ecoregion-comparison."
+
+targets::tar_read(plot_aoa_ga)
+```
+
+::: {.notes}
+
+- Before we even attempt to predict forests in Georgia, we have to ask a fundamental question: **Is it fair to ask a Washington model to understand Georgia?** We can't just assume the rules of nature are the same. We need to measure the mathematical distance between these two worlds.
+
+**What am I looking at?**
+- This map **does not** show predictions. It shows **familiarity**.
+- We calculated a **Dissimilarity Index** for every pixel in Georgia. Essentially, we asked the model: *"Have you seen conditions like this before?"*
+- **Dark Purple/Black:** These areas are the "safe zones." The elevation, temperature, and precipitation here fall within the ranges the model learned in the Cascades.
+- **Bright Yellow:** These are the "alien" zones. The combination of variables here (likely the hot, humid lowlands) is completely outside the model's experience. This is pure extrapolation.
+
+**The Takeaway:**
+- This creates a **Risk Map**. If our model fails, we expect it to fail *here* [gesture to yellow areas].
+- It tells us where our confidence should be high (the purple) and where any prediction is just a wild guess (the yellow).
+:::
+
+## External Validation: Georgia
+
+```{r}
+#| label: fig-ga-predictions
+#| echo: false
+#| out-width: "100%"
+#| fig-cap: "<b>External Validation: Predicted vs. Actual.</b> A side-by-side comparison of the model's predictions (Left) versus the true forest inventory (Right)."
+
+targets::tar_read(map_ga_probs)
+```
+
+::: {.notes}
+
+- We took the model trained in the Pacific Northwest and asked it: "Where are the forests in Georgia?"
+
+- The Map: This shows the model's raw probability output.
+
+- The Pattern: You can see it identifying the Blue Ridge Mountains (yellow/green) in the northeast.
+
+- The Question: Does this match reality? Or is it seeing "forests" in places that are actually agricultural fields or swamps?
+:::
+
+## Quantifying the Error
+
+```{r}
+#| label: fig-ga-confusion
+#| echo: false
+#| out-width: "80%"
+#| fig-align: "center"
+#| fig-cap: "<b>Confusion Matrix (Georgia).</b> The model accuracy drops significantly compared to Washington. Note the high number of false negatives.(Prediction: No / Truth: Yes)."
+
+targets::tar_read(ga_conf_mat)
+```
+
+## Mapping the Failures
+
+```{r}
+#| label: fig-ga-errors
+#| echo: false
+#| out-width: "100%"
+#| fig-cap: "<b>Spatial Distribution of Errors.</b> Note the increasing density of errors as latitude decreases."
+
+targets::tar_read(map_ga_errors)
+
+```
+
+::: {.notes}
+**Visualizing the "Phantom Forests"**
+
+- This map only shows the mistakes. And unlike Washington, where we had a handful of dots, here the map is lit up.
+- **Orange Points (False Positives):** Look at the massive cluster in the South/Southeast.
+    - These are the **"Phantom Forests."**
+    - Notice how they perfectly overlap with the "Yellow Zone" (high dissimilarity) we identified at the start. The model saw crops and scrubland and hallucinated trees.
+- **The Verdict:** The error isn't random. It is geographically structured. We broke the model exactly where the AOA predicted it would break.
+:::
+
+
+## Lessons Learned
+
+::: {.incremental}
+* **Accuracy Collapse:** ~89% (WA) $\to$ ~54% (GA).
+* **AOA Validation:** The "Yellow Zone" correctly flagged the risk.
+* **The Trap:** High confidence in "Phantom Forests."
+* **The Fix:** Quantify domain distance *before* deployment.
+:::
+
+::: {.notes}
+**1. The Numbers Don't Lie**
+We witnessed a catastrophic failure in performance. In Washington, we had a precision instrument (90% accuracy). In Georgia, we essentially flipped a coin (54%). If we had deployed this model in production without validation, we would be generating random noise.
+
+**2. The "Yellow Zone" Was a Warning, Not a Bug**
+Remember that bright yellow map? That wasn't just a pretty picture. The Area of Applicability (AOA) screamed at us that the Southeastern Plains were alien territory. The model failed exactly where the AOA said it would—predicting forests in flat, hot agricultural zones it didn't understand.
+
+**3. The "Phantom Forest" Problem**
+Our confusion matrix showed a massive spike in False Positives. This is dangerous. The model didn't say "I don't know"; it confidently declared "Yes, there is a forest here." We call these "Phantom Forests." In a real-world scenario—like carbon credit monitoring or fire risk assessment—phantom forests cost millions of dollars.
+
+**4. The Ultimate Takeaway**
+The model failed, but the **workflow succeeded**. By calculating the multidimensional distance between our training data and our target data, we predicted *where* the model would break before we even ran it.
+
+**Conclusion:** In spatial data science, you cannot simply "train and deploy." You must respect the ecological boundaries of your training data.
+:::
+
 
 # References
 
